@@ -24,7 +24,33 @@ import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
  * @author Ryan J. McCall
  */
 public interface ProceduralMemory extends FrameworkModule {
-
+    
+    /**
+     * 
+     * The possible type of usage for a condition inside a {@link Scheme}
+     * 
+     */
+    public enum ConditionType {
+        /**
+         * A {@link Condition} that is part of a scheme's context.
+         */
+        CONTEXT,
+        /**
+         * A {@link Condition} that is part of a scheme's adding list.
+         */
+        ADDINGLIST,
+        /**
+         * A {@link Condition} that is part of a scheme's deleting list. Not yet
+         * supported.
+         */
+        DELETINGLIST,
+        /**
+         * A {@link Condition} that is part of a scheme's negated context. Not
+         * yet supported.
+         */
+        NEGATEDCONTEXT
+    };
+    
     /**
      * Gets a new {@link Scheme} having specified {@link Action}.
      * 
