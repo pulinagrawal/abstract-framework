@@ -30,3 +30,4 @@ public interface WorkspaceListener extends ModuleListener {
     public void receiveWorkspaceContent(ModuleName originatingBuffer, CognitiveContentStructure content);
 
 }
+

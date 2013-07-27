@@ -39,3 +39,4 @@ public interface Action extends Initializable {
 	public int getId();
 
 }
+

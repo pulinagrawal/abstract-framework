@@ -50,3 +50,4 @@ public interface DecayStrategy extends Strategy {
 			Map<String, ? extends Object> params);
 
 }
+

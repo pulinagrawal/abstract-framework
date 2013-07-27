@@ -130,3 +130,4 @@ public class FrameworkGuiDef {
         this.panels = panels;
     }
 }
+

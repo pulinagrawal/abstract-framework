@@ -27,3 +27,4 @@ public interface TriggerListener {
 	 */
 	public void triggerBroadcast(BroadcastTrigger t);
 }
+

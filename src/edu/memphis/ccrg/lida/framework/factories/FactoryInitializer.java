@@ -24,3 +24,4 @@ public interface FactoryInitializer<T extends InitializableFactory> {
     public void init();
 
 }
+

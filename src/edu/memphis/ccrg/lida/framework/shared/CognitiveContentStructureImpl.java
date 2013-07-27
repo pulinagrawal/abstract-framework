@@ -95,3 +95,4 @@ public class CognitiveContentStructureImpl implements CognitiveContentStructure 
     }
 
 }
+

@@ -94,6 +94,14 @@ public class FactoryManager {
         initializer.init();
     }
 
+    public Set<Class<? extends Factory>> listFactories() {
+       if (factories == null) {
+           return new HashSet<Class<? extends Factory>>();
+       }
+       
+       return factories.keySet();
+    }
+    
     // An inner class to initialize the FactoryManager and its factories
     private class FactoryManagerInitializer {
         private static final String FACTORY_CONFIG_PROPERTY_NAME = "lida.factory.config";

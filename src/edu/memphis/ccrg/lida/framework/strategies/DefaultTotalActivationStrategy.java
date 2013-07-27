@@ -25,3 +25,4 @@ public class DefaultTotalActivationStrategy extends StrategyImpl implements
 	}
 
 }
+

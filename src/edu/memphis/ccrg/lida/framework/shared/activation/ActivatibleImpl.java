@@ -13,15 +13,13 @@ import java.util.logging.Logger;
 import edu.memphis.ccrg.lida.framework.factories.FactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.StrategyFactory;
 import edu.memphis.ccrg.lida.framework.initialization.InitializableImpl;
-import edu.memphis.ccrg.lida.framework.shared.ns.Node;
 import edu.memphis.ccrg.lida.framework.strategies.DecayStrategy;
 import edu.memphis.ccrg.lida.framework.strategies.ExciteStrategy;
 import edu.memphis.ccrg.lida.framework.tasks.Codelet;
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
 
 /**
- * Generic {@link Activatible} Implementation. Useful for classes to extend from
- * it, e.g. {@link Node} and {@link Codelet}.
+ * Generic {@link Activatible} Implementation.
  * 
  * @author Javier Snaider
  * @author Ryan J. McCall
@@ -226,3 +224,4 @@ public class ActivatibleImpl extends InitializableImpl implements Activatible {
 		return getActivation()+getIncentiveSalience()<=removalThreshold;
 	}
 }
+

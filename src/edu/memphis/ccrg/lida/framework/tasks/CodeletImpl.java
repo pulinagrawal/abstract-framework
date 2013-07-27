@@ -33,3 +33,4 @@ public abstract class CodeletImpl extends FrameworkTaskImpl implements Codelet {
         soughtContent = (CognitiveContentStructure) content;
     }
 }
+

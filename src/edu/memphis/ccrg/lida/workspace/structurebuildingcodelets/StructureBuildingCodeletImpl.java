@@ -95,3 +95,4 @@ public abstract class StructureBuildingCodeletImpl extends CodeletImpl
 	}
 
 }
+

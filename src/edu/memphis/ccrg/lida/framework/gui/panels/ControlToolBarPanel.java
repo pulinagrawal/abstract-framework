@@ -280,3 +280,4 @@ public class ControlToolBarPanel extends GuiPanelImpl {
 		currentTickTextField.setText(TaskManager.getCurrentTick() + "");
 	}
 }
+

@@ -346,3 +346,4 @@ public class GlobalWorkspaceImpl extends FrameworkModuleImpl implements
 	}
 
 }
+

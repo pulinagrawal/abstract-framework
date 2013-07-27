@@ -126,3 +126,4 @@ public class SigmoidDecayStrategy extends StrategyImpl implements DecayStrategy 
 	}
 
 }
+

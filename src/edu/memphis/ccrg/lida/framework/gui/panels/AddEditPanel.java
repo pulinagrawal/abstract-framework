@@ -285,3 +285,4 @@ public class AddEditPanel extends GuiPanelImpl {
     // End of variables declaration//GEN-END:variables
 
 }
+

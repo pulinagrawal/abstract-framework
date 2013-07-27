@@ -287,3 +287,4 @@ public class FrameworkTaskPanel extends GuiPanelImpl {
 		}
 	}
 }
+

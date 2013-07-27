@@ -56,3 +56,4 @@ public class SensoryMemoryBackgroundTask extends FrameworkTaskImpl {
 		sm.runSensors();
 	}
 }
+

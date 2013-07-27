@@ -33,3 +33,4 @@ public interface FullyInitializable extends Initializable {
 	public void setAssociatedModule(FrameworkModule m, String usg);
 
 }
+

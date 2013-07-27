@@ -24,3 +24,4 @@ public interface BroadcastQueue extends WorkspaceBuffer, BroadcastListener {
 	public CognitiveContentStructure getPositionContent(int index);
 
 }
+

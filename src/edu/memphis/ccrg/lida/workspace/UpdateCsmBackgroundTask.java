@@ -56,3 +56,4 @@ public class UpdateCsmBackgroundTask extends FrameworkTaskImpl {
 		csm.addBufferContent(perceptualBuffer.getBufferContent(null));
 	}
 }
+

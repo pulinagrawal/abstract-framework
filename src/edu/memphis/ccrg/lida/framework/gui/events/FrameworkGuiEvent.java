@@ -96,3 +96,4 @@ public class FrameworkGuiEvent {
 		return content;
 	}
 }
+

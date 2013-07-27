@@ -55,3 +55,4 @@ public class AgentImpl extends FrameworkModuleImpl implements Agent {
 	public void decayModule(long ticks) {
 	}
 }
+

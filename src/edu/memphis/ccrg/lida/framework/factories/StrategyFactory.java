@@ -84,3 +84,4 @@ public interface StrategyFactory extends InitializableFactory {
      */
     public ExciteStrategy getExciteStrategy(String exciteName);
 }
+

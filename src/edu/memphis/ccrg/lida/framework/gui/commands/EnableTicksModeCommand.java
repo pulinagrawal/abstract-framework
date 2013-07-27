@@ -27,3 +27,4 @@ public class EnableTicksModeCommand extends CommandImpl {
 	}
 
 }
+

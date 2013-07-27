@@ -24,3 +24,4 @@ import edu.memphis.ccrg.lida.workspace.workspacebuffers.WorkspaceBuffer;
 public interface AttentionCodelet extends Codelet, RefractoryPeriod {
 
 }
+

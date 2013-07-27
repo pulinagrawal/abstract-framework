@@ -27,3 +27,4 @@ public interface ActionSelectionListener extends ModuleListener {
 	public void receiveAction(Action action);
 
 }
+

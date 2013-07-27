@@ -44,3 +44,4 @@ public interface BehaviorFactory {
     public Behavior getBehavior(Scheme s, String type,
             Map<String, ? extends Object> params);
 }
+

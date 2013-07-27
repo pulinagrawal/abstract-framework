@@ -27,3 +27,4 @@ public class PauseRunningThreadsCommand extends CommandImpl {
 		agent.getTaskManager().pauseTasks();
 	}
 }
+

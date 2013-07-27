@@ -19,3 +19,4 @@ import edu.memphis.ccrg.lida.framework.FrameworkModule;
  */
 public interface Workspace extends FrameworkModule {
 }
+

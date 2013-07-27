@@ -206,3 +206,4 @@ public class ProceduralMemoryPanel extends GuiPanelImpl {
 		}
 	}
 }
+

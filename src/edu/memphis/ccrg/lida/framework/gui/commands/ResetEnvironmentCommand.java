@@ -29,3 +29,4 @@ public class ResetEnvironmentCommand extends CommandImpl {
 	}
 
 }
+

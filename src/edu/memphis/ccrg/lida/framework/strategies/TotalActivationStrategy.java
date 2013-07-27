@@ -26,3 +26,4 @@ public interface TotalActivationStrategy extends Strategy {
 	public double calculateTotalActivation(double bla, double ca);
 
 }
+

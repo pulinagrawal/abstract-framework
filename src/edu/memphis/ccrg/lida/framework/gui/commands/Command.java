@@ -70,3 +70,4 @@ public interface Command {
 	public Object getParameter(String name);
 
 }
+

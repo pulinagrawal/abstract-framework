@@ -60,3 +60,4 @@ public class ActionImpl extends InitializableImpl implements Action {
 		return label;
 	}
 }
+

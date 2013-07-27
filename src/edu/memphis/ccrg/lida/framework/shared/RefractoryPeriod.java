@@ -36,3 +36,4 @@ public interface RefractoryPeriod {
 	public int getRefractoryPeriod();
 
 }
+

@@ -46,3 +46,4 @@ public class FrameworkFormatter extends Formatter {
 		return "";
 	}
 }
+

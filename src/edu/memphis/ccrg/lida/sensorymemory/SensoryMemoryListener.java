@@ -29,3 +29,4 @@ public interface SensoryMemoryListener extends ModuleListener {
 	public void receiveSensoryMemoryContent(Object content);
 
 }
+

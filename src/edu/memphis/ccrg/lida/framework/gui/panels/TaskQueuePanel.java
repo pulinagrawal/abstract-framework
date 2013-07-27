@@ -245,3 +245,4 @@ public class TaskQueuePanel extends GuiPanelImpl {
 		}
 	}
 }
+

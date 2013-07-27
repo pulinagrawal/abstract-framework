@@ -152,3 +152,4 @@ public interface FrameworkModule extends FullyInitializable {
 	public Map<ModuleName, FrameworkModule> getSubmodules();
 
 }
+

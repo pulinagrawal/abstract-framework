@@ -41,3 +41,4 @@ public interface WorkspaceBuffer extends FrameworkModule {
     public void addBufferContent(CognitiveContentStructure content);
 
 }
+

@@ -120,3 +120,4 @@ public class FrameworkGuiPanelDef {
         this.options = options;
     }
 }
+

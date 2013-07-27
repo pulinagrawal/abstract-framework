@@ -35,3 +35,4 @@ public interface InitializableFactory extends Factory {
      */
     public void init(FactoryDef factoryDef);
 }
+

@@ -27,3 +27,4 @@ public interface Translatable {
 	 */
 	public BitVector getSdmId();
 }
+

@@ -15,7 +15,6 @@ import edu.memphis.ccrg.lida.attentioncodelets.AttentionCodeletImpl;
 import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
 import edu.memphis.ccrg.lida.framework.shared.UnmodifiableCognitiveContentStructureImpl;
 import edu.memphis.ccrg.lida.framework.shared.activation.ActivatibleImpl;
-import edu.memphis.ccrg.lida.framework.shared.ns.Linkable;
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
 
 /**

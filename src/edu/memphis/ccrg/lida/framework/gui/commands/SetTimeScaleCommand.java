@@ -28,3 +28,4 @@ public class SetTimeScaleCommand extends CommandImpl {
 	}
 
 }
+

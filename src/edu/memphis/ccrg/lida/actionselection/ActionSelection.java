@@ -57,3 +57,4 @@ public interface ActionSelection extends FrameworkModule {
 	 */
 	public Collection<Behavior> getBehaviors();
 }
+

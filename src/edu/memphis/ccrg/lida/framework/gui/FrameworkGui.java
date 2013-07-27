@@ -754,3 +754,4 @@ public class FrameworkGui extends javax.swing.JFrame implements FrameworkGuiEven
         });
     }
 }
+

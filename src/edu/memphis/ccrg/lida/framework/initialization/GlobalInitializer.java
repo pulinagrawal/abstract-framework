@@ -96,3 +96,4 @@ public class GlobalInitializer {
 		globalAttributes.clear();
 	}
 }
+

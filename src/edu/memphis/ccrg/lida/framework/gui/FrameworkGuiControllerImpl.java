@@ -87,3 +87,4 @@ public class FrameworkGuiControllerImpl implements FrameworkGuiController {
 	}
 
 }
+

@@ -32,3 +32,4 @@ public interface GuiEventProvider {
 	 */
 	public void sendEventToGui(FrameworkGuiEvent event);
 }
+

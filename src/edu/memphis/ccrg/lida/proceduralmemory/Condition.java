@@ -21,3 +21,4 @@ public interface Condition extends Activatible {
 	 */
 	public Object getConditionId();
 }
+

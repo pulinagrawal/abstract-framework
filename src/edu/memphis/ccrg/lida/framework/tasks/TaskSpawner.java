@@ -98,3 +98,4 @@ public interface TaskSpawner extends Initializable {
 	public Collection<FrameworkTask> getTasks();
 
 }
+

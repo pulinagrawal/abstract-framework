@@ -23,3 +23,4 @@ public interface SensoryMotorMemoryListener extends ModuleListener {
 	public void receiveActuatorCommand(Object command);
 
 }
+

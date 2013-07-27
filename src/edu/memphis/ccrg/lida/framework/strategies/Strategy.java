@@ -20,3 +20,4 @@ import edu.memphis.ccrg.lida.framework.initialization.Initializable;
 public interface Strategy extends Initializable {
 
 }
+

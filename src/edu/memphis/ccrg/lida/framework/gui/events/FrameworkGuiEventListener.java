@@ -29,3 +29,4 @@ public interface FrameworkGuiEventListener {
 	public void receiveFrameworkGuiEvent(FrameworkGuiEvent event);
 
 }
+

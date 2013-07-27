@@ -7,7 +7,7 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.actionselection;
 
-import edu.memphis.ccrg.lida.framework.shared.ns.NodeStructure;
+import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
 
 /**
  * Listener of preafferent signal from {@link ActionSelection}
@@ -25,7 +25,7 @@ public interface PreafferenceListener {
 	 * @param deleteSet
 	 *            expected deletions in future percepts
 	 */
-	public void receivePreafference(NodeStructure addSet,
-			NodeStructure deleteSet);
+	public void receivePreafference(CognitiveContentStructure addSet,
+			CognitiveContentStructure deleteSet);
 
 }

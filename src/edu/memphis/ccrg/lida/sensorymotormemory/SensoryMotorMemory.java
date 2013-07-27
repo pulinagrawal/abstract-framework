@@ -39,3 +39,4 @@ public interface SensoryMotorMemory extends FrameworkModule {
 	public void sendActuatorCommand(Object command);
 
 }
+

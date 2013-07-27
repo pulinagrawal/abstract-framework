@@ -8,7 +8,7 @@
 package edu.memphis.ccrg.lida.episodicmemory;
 
 import edu.memphis.ccrg.lida.framework.ModuleListener;
-import edu.memphis.ccrg.lida.framework.shared.ns.NodeStructure;
+import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
 
 /**
  * Listen to response from Episodic memory to a previous cue. This cue need not
@@ -24,6 +24,6 @@ public interface LocalAssociationListener extends ModuleListener {
 	 *            The response generated from the Episodic Memory to a previous
 	 *            cue.
 	 */
-	public void receiveLocalAssociation(NodeStructure association);
+	public void receiveLocalAssociation(CognitiveContentStructure association);
 
 }

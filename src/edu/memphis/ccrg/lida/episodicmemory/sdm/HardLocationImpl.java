@@ -131,3 +131,4 @@ public class HardLocationImpl implements HardLocation {
 	}
 
 }
+

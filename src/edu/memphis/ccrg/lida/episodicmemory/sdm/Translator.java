@@ -9,11 +9,11 @@
 package edu.memphis.ccrg.lida.episodicmemory.sdm;
 
 import cern.colt.bitvector.BitVector;
-import edu.memphis.ccrg.lida.framework.shared.ns.NodeStructure;
+import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
 
 /**
  * A translator between {@link BitVector} used in
- * {@link SparseDistributedMemory}, and {@link NodeStructure} used in many other
+ * {@link SparseDistributedMemory}, and {@link CognitiveContentStructure} used in many other
  * LIDA modules.
  * 
  * @author Javier Snaider
@@ -21,23 +21,23 @@ import edu.memphis.ccrg.lida.framework.shared.ns.NodeStructure;
 public interface Translator {
 
 	/**
-	 * Translates a {@link BitVector} into a {@link NodeStructure}.
+	 * Translates a {@link BitVector} into a {@link CognitiveContentStructure}.
 	 * 
 	 * @param v
 	 *            a {@link BitVector} containing the boolean vector to be
 	 *            translated
-	 * @return the {@link NodeStructure} associated with the address
+	 * @return the {@link CognitiveContentStructure} associated with the address
 	 */
-	public NodeStructure translate(BitVector v);
+	public CognitiveContentStructure translate(BitVector v);
 
 	/**
-	 * Translates a {@link NodeStructure} into a {@link BitVector}.
+	 * Translates a {@link CognitiveContentStructure} into a {@link BitVector}.
 	 * 
 	 * @param ns
-	 *            the {@link NodeStructure} to be translated
+	 *            the {@link CognitiveContentStructure} to be translated
 	 * @return a {@link BitVector} with the boolean address associated with the
-	 *         {@link NodeStructure}
+	 *         {@link CognitiveContentStructure}
 	 */
-	public BitVector translate(NodeStructure ns);
+	public BitVector translate(CognitiveContentStructure ns);
 
 }

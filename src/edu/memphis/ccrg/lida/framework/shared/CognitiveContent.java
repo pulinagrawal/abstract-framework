@@ -20,3 +20,4 @@ import edu.memphis.ccrg.lida.framework.shared.activation.Activatible;
  */
 public interface CognitiveContent extends Activatible, Initializable {
 }
+

@@ -42,3 +42,4 @@ public class AddPanelCommand extends CommandImpl {
 	}
 
 }
+

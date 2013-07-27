@@ -82,3 +82,4 @@ public interface GuiPanel {
 	public String getName();
 
 }
+

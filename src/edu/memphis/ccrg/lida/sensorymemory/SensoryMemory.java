@@ -50,3 +50,4 @@ public interface SensoryMemory extends FrameworkModule {
 	public Object getSensoryContent(String modality, Map<String, Object> params);
 
 }
+

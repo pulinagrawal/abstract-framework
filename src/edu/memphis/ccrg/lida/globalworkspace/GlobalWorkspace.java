@@ -111,3 +111,4 @@ public interface GlobalWorkspace extends FrameworkModule, TriggerListener,
 	public double getCoalitionRemovalThreshold();
 
 }
+

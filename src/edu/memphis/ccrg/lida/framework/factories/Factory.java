@@ -16,3 +16,4 @@ package edu.memphis.ccrg.lida.framework.factories;
 public interface Factory {
 
 }
+
