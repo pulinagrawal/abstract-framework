@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import edu.memphis.ccrg.lida.actionselection.PreafferenceListener;
 import edu.memphis.ccrg.lida.framework.CodeletManagerModule;
 import edu.memphis.ccrg.lida.framework.FrameworkModule;
 import edu.memphis.ccrg.lida.framework.FrameworkModuleImpl;
@@ -34,7 +35,7 @@ import edu.memphis.ccrg.lida.workspace.Workspace;
  * 
  */
 public class AttentionCodeletModule extends FrameworkModuleImpl implements
-		BroadcastListener, CodeletManagerModule {
+		BroadcastListener, PreafferenceListener, CodeletManagerModule {
 
 	private static final Logger logger = Logger
 			.getLogger(AttentionCodeletModule.class.getCanonicalName());
@@ -159,6 +160,15 @@ public class AttentionCodeletModule extends FrameworkModuleImpl implements
 			logger.log(Level.WARNING, "Can only add an AttentionCodelet",
 					TaskManager.getCurrentTick());
 		}
+	}
+
+	@Override
+	public void receivePreafference(CognitiveContentStructure addSet,
+			CognitiveContentStructure deleteSet) {
+		// TODO Receive results from Action Selection and create Attention
+		// Codelets. We need
+		// to figure out how to create coalitions and detect that something was
+		// "deleted"
 	}
 
 	/**
