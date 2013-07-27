@@ -8,9 +8,7 @@
 package edu.memphis.ccrg.lida.pam;
 
 import edu.memphis.ccrg.lida.framework.ModuleListener;
-import edu.memphis.ccrg.lida.framework.shared.Link;
-import edu.memphis.ccrg.lida.framework.shared.Node;
-import edu.memphis.ccrg.lida.framework.shared.NodeStructure;
+import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
 
 /**
  * A PamListener receives percepts from {@link PerceptualAssociativeMemory}
@@ -21,27 +19,11 @@ import edu.memphis.ccrg.lida.framework.shared.NodeStructure;
 public interface PamListener extends ModuleListener {
 
 	/**
-	 * Receive a {@link NodeStructure} percept.
+	 * Receive a {@link CognitiveContentStructure} percept.
 	 * 
-	 * @param ns
-	 *            a NodeStructure
+	 * @param content
+	 *            a CognitiveContentStructure
 	 */
-	public void receivePercept(NodeStructure ns);
-
-	/**
-	 * Receive a {@link Node} percept.
-	 * 
-	 * @param n
-	 *            a {@link Node}
-	 */
-	public void receivePercept(Node n);
-
-	/**
-	 * Receive a {@link Link} percept.
-	 * 
-	 * @param l
-	 *            a {@link Link}
-	 */
-	public void receivePercept(Link l);
+	public void receivePercept(CognitiveContentStructure content);
 
 }

@@ -8,12 +8,24 @@
 package edu.memphis.ccrg.lida.pam;
 
 import edu.memphis.ccrg.lida.framework.FrameworkModule;
+import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
 
 /**
  * @author Sean Kugele
  *
  */
 public interface PerceptualAssociativeMemory extends FrameworkModule {
-
+    
+    /**
+     * Adds {@link PamListener}.
+     * 
+     * @param pl
+     *            listener
+     */
+    public void addPamListener(PamListener pl);
+    
+    public void receive(Enum mode, CognitiveContentStructure content);
+    
+    public void learn(CognitiveContentStructure content);
 }
 
