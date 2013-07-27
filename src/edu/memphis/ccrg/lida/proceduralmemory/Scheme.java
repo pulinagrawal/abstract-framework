@@ -10,6 +10,7 @@ package edu.memphis.ccrg.lida.proceduralmemory;
 import edu.memphis.ccrg.lida.actionselection.Action;
 import edu.memphis.ccrg.lida.actionselection.Behavior;
 import edu.memphis.ccrg.lida.framework.shared.activation.Learnable;
+import edu.memphis.ccrg.lida.proceduralmemory.ProceduralMemory.ConditionType;
 
 /**
  * A Scheme consists of a Context, an Action and a Result. A scheme is activated
@@ -38,7 +39,7 @@ public interface Scheme extends ProceduralUnit, Learnable {
 	 *            the usage type of the condition
 	 * @return true, if successful
 	 */
-	public boolean addCondition(Condition c, String type);
+	public boolean addCondition(Condition c, ConditionType type);
 
 	/**
 	 * Called when Scheme's action is executed Scheme should update the number
