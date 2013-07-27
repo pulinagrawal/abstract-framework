@@ -26,18 +26,25 @@ import edu.memphis.ccrg.lida.framework.shared.activation.Activatible;
  */
 public interface Coalition extends Activatible {
 
-	/**
-	 * Returns the content of the coalition.
-	 * 
-	 * @return The {@link CognitiveContentStructure} of the coalition
-	 */
-	public CognitiveContentStructure getContent();
+    /**
+     * Returns the content of the coalition.
+     * 
+     * @return The {@link CognitiveContentStructure} of the coalition
+     */
+    public CognitiveContentStructure getContent();
 
-	/**
-	 * Returns the creating {@link AttentionCodelet} that created this coalition
-	 * 
-	 * @return The {@link AttentionCodelet} that help form this coalition
-	 */
-	public AttentionCodelet getCreatingAttentionCodelet();
+    /**
+     * Returns the creating {@link AttentionCodelet} that created this coalition
+     * 
+     * @return The {@link AttentionCodelet} that help form this coalition
+     */
+    public AttentionCodelet getCreatingAttentionCodelet();
+
+    /**
+     * Returns the id
+     * 
+     * @return the unique id of the Coalition
+     */
+    public int getId();
 
 }

@@ -28,86 +28,92 @@ import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
  */
 public class CoalitionImpl extends ActivatibleImpl implements Coalition {
 
-	private static final Logger logger = Logger.getLogger(CoalitionImpl.class
-			.getCanonicalName());
-	private static int idCounter = 0;
-	/*
-	 * unique id
-	 */
-	private int id;
-	/**
-	 * the contents of the coalition
-	 */
-	protected CognitiveContentStructure broadcastContent;
+    private static final Logger logger = Logger.getLogger(CoalitionImpl.class
+            .getCanonicalName());
+    private static int idCounter = 0;
+    /*
+     * unique id
+     */
+    private int id;
+    /**
+     * the contents of the coalition
+     */
+    protected CognitiveContentStructure broadcastContent;
 
-	/**
-	 * the {@link AttentionCodelet} that created the coalition
-	 */
-	protected AttentionCodelet creatingAttentionCodelet;
+    /**
+     * the {@link AttentionCodelet} that created the coalition
+     */
+    protected AttentionCodelet creatingAttentionCodelet;
 
-	/**
-	 * Default constructor
-	 */
-	public CoalitionImpl() {
-		super();
-		id = idCounter++;
-	}
+    /**
+     * Default constructor
+     */
+    public CoalitionImpl() {
+        super();
+        id = idCounter++;
+    }
 
-	/**
-	 * Constructs a {@link CoalitionImpl} with specified content that is being
-	 * created by specified {@link AttentionCodelet}
-	 * 
-	 * @param ns
-	 *            the broadcast content
-	 * @param c
-	 *            The {@link AttentionCodelet} that created this Coalition
-	 * @see AttentionCodeletImpl
-	 */
-	public CoalitionImpl(CognitiveContentStructure ns, AttentionCodelet c) {
-		this();
-		broadcastContent = new UnmodifiableCognitiveContentStructureImpl(ns,true);
-		creatingAttentionCodelet = c;
-		if(creatingAttentionCodelet != null) {
-			updateActivation();
-		}else{
-			logger.log(Level.WARNING, "Coalition received null AttentionCodelet",
-					TaskManager.getCurrentTick());
-		}
-	}
+    /**
+     * Constructs a {@link CoalitionImpl} with specified content that is being
+     * created by specified {@link AttentionCodelet}
+     * 
+     * @param ns
+     *            the broadcast content
+     * @param c
+     *            The {@link AttentionCodelet} that created this Coalition
+     * @see AttentionCodeletImpl
+     */
+    public CoalitionImpl(CognitiveContentStructure ns, AttentionCodelet c) {
+        this();
+        broadcastContent = new UnmodifiableCognitiveContentStructureImpl(ns, true);
+        creatingAttentionCodelet = c;
+        if (creatingAttentionCodelet != null) {
+            updateActivation();
+        } else {
+            logger.log(Level.WARNING, "Coalition received null AttentionCodelet",
+                    TaskManager.getCurrentTick());
+        }
+    }
 
-	/**
-	 * Calculates and sets the coalition's activation. This implementation uses the
-	 * average total activation and total incentive salience of the broadcast content 
-	 * multiplied by the attention codelet's base-level activation.
-	 */
-	protected void updateActivation() {
-		double a = 0.0;
-		
-		// TODO: Need to implement using an activation strategy
-		setActivation(a);
-	}
+    /**
+     * Calculates and sets the coalition's activation. This implementation uses
+     * the average total activation and total incentive salience of the
+     * broadcast content multiplied by the attention codelet's base-level
+     * activation.
+     */
+    protected void updateActivation() {
+        double a = 0.0;
 
-	@Override
-	public CognitiveContentStructure getContent() {
-		return broadcastContent;
-	}
+        // TODO: Need to implement using an activation strategy
+        setActivation(a);
+    }
 
-	@Override
-	public AttentionCodelet getCreatingAttentionCodelet() {
-		return creatingAttentionCodelet;
-	}
+    @Override
+    public CognitiveContentStructure getContent() {
+        return broadcastContent;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof CoalitionImpl) {
-			CoalitionImpl c = (CoalitionImpl) o;
-			return id == c.id;
-		}
-		return false;
-	}
+    @Override
+    public AttentionCodelet getCreatingAttentionCodelet() {
+        return creatingAttentionCodelet;
+    }
 
-	@Override
-	public int hashCode() {
-		return (int)id;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof CoalitionImpl) {
+            CoalitionImpl c = (CoalitionImpl) o;
+            return id == c.id;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) id;
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
 }
