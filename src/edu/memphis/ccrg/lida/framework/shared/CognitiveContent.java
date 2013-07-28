@@ -7,7 +7,6 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.shared;
 
-import edu.memphis.ccrg.lida.framework.initialization.Initializable;
 import edu.memphis.ccrg.lida.framework.shared.activation.Activatible;
 
 /**
@@ -18,6 +17,6 @@ import edu.memphis.ccrg.lida.framework.shared.activation.Activatible;
  * @author Javier Snaider
  * 
  */
-public interface CognitiveContent extends Activatible, Initializable {
+public interface CognitiveContent extends Activatible {
 }
 
