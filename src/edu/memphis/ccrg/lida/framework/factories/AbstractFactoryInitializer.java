@@ -7,17 +7,18 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.factories;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.w3c.dom.Document;
-
-import edu.memphis.ccrg.lida.framework.initialization.FactoryDef;
 import edu.memphis.ccrg.lida.framework.initialization.GlobalInitializer;
-import edu.memphis.ccrg.lida.framework.initialization.FactoryDef.XmlConfig;
-import edu.memphis.ccrg.lida.framework.initialization.XmlUtils;
+import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryConfig;
+import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryDef;
+import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryObject;
+import edu.memphis.ccrg.lida.framework.xml.schema.LidaParam;
+import edu.memphis.ccrg.lida.framework.xml.schema.generated.lida.Param;
 
 /**
  * 
@@ -47,9 +48,10 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
     protected T factory;
 
     /**
-     * The {@link FactoryDef} that will be used to perform the initialization
+     * The {@link LidaFactoryDef} that will be used to perform the
+     * initialization
      */
-    protected FactoryDef factoryDef;
+    protected LidaFactoryDef factoryDef;
 
     /**
      * Constructor.
@@ -57,10 +59,10 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
      * @param factory
      *            the {@link Factory} to be initialized
      * @param factoryDef
-     *            the {@link FactoryDef} that will be used referenced for
+     *            the {@link LidaFactoryDef} that will be used referenced for
      *            initialization details
      */
-    protected AbstractFactoryInitializer(T factory, FactoryDef factoryDef) {
+    protected AbstractFactoryInitializer(T factory, LidaFactoryDef factoryDef) {
         this.factory = factory;
         this.factoryDef = factoryDef;
     }
@@ -90,15 +92,37 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
     }
 
     /**
-     * Returns the {@link FactoryDef} that will be used to initialize the
+     * Returns the {@link LidaFactoryDef} that will be used to initialize the
      * {@link Factory} serviced by this initializer.
      * 
-     * @return the {@link FactoryDef}
+     * @return the {@link LidaFactoryDef}
      */
-    protected FactoryDef getFactoryDef() {
+    protected LidaFactoryDef getFactoryDef() {
         return factoryDef;
     }
 
+    protected List<LidaFactoryObject> getFactoryObjects() {
+        if (factoryDef != null) {
+            LidaFactoryConfig factoryConfig = factoryDef.getFactoryConfig();
+            if (factoryConfig != null) {
+               factoryConfig.getFactoryObjects();
+            }
+        }
+        
+        return new ArrayList<LidaFactoryObject>();
+    }
+    
+    protected List<LidaParam> getFactoryParams() {
+        if (factoryDef != null) {
+            LidaFactoryConfig factoryConfig = factoryDef.getFactoryConfig();
+            if (factoryConfig != null) {
+               factoryConfig.getFactoryParams();
+            }
+        }
+        
+        return new ArrayList<LidaParam>();
+    } 
+    
     private void checkPreconditions() {
 
         // Verify that the supplied FactoryDef matches the factory's class
@@ -129,8 +153,8 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
             return false;
         }
 
-        if (factoryDef.getClassname() == null || factoryDef.getConfig() == null
-                || factoryDef.getName() == null || factoryDef.getType() == null) {
+        if (factoryDef.getFactoryName() == null || factoryDef.getFactoryType() == null
+                || factoryDef.getFactoryImpl() == null || factoryDef.getFactoryConfig() == null) {
             return false;
         }
 
