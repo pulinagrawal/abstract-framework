@@ -35,7 +35,11 @@ public class LidaFactoryObject {
             
         objectParams = transformParams(factoryObject.getParams());
     }
-    
+   
+    public String getName() {
+        return name;
+    }
+
     public String getObjectType() {
         return objectType;
     }

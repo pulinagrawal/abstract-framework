@@ -69,8 +69,12 @@ public class LidaFactoryDef {
         }
 
         String[] tokens = dependsAttr.split(DEPENDS_SEPARATOR);
-        for (String t : tokens) {
-            resultSet.add(t);
+        if (tokens != null) {
+            for (String t : tokens) {
+                if (!t.isEmpty()) {
+                    resultSet.add(t);
+                }
+            }
         }
 
         return resultSet;

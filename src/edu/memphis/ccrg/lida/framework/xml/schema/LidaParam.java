@@ -25,4 +25,15 @@ public class LidaParam {
         value = param.getValue();
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }
