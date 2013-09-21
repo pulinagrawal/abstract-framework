@@ -7,8 +7,7 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.factories;
 
-import edu.memphis.ccrg.lida.framework.initialization.FactoryDef;
-import edu.memphis.ccrg.lida.framework.initialization.Initializable;
+import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryDef;
 
 /**
  * An interface for an initializable {@link Factory}. All factories that are
@@ -28,11 +27,11 @@ public interface InitializableFactory extends Factory {
     
     /**
      * Initializes this factory based on the details specified in the supplied
-     * {@link FactoryDef}.
+     * {@link LidaFactoryDef}.
      * 
      * @param factoryDef
-     *            a {@link FactoryDef} containing initialization details
+     *            a {@link LidaFactoryDef} containing initialization details
      */
-    public void init(FactoryDef factoryDef);
+    public void init(LidaFactoryDef factoryDef);
 }
 
