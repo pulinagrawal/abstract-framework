@@ -40,12 +40,6 @@ public class FactoryManager {
      */
     private static FactoryManager instance = new FactoryManager();
 
-    // TODO: A limitation of the current implementation is that we can only
-    // register a single implementation for each factory interface. It seems to
-    // be a completely reasonable use case to have multiple implementations for
-    // the same factory (i.e., PamStrategyFactory, ProcMemoryStrategyFactory,
-    // EpisodicMemoryStrategyFactory, etc.)
-
     /*
      * Map of Factory interfaces to registered implementations of those
      * interfaces
@@ -128,6 +122,8 @@ public class FactoryManager {
         private static final String DEFAULT_FACTORY_CONFIG_XML_FILE_PATH = "configs/lidaFactoryConfig.xml";
         private static final String DEFAULT_FACTORIES_CONFIG_SCHEMA_FILE_PATH = "edu/memphis/ccrg/lida/framework/initialization/config/LidaFactoriesXMLSchema.xsd";
 
+        private static final boolean VALIDATE_XML = true;
+
         private final GlobalInitializer globalInitializer = GlobalInitializer.getInstance();
 
         private final String factoryConfigFilename;
@@ -147,17 +143,20 @@ public class FactoryManager {
 
         public void init() {
             try {
-                // Verify the Lida factories configuration file conforms to the
-                // expected layout
-//                if (!XmlUtils.validateXmlFile(factoryConfigFilename,
-//                        DEFAULT_FACTORIES_CONFIG_SCHEMA_FILE_PATH)) {
-//                    logger.log(
-//                            Level.WARNING,
-//                            "LidaFactories configuration file {0} violates the expected XML schema defined in {1}",
-//                            new Object[] { factoryConfigFilename,
-//                                    DEFAULT_FACTORIES_CONFIG_SCHEMA_FILE_PATH });
-//                    return;
-//                }
+                if (VALIDATE_XML) {
+                    
+                    // Verify the Lida factories configuration file conforms to
+                    // the expected layout
+                    if (!XmlUtils.validateXmlFile(factoryConfigFilename,
+                            DEFAULT_FACTORIES_CONFIG_SCHEMA_FILE_PATH)) {
+                        logger.log(
+                                Level.WARNING,
+                                "LidaFactories configuration file {0} violates the expected XML schema defined in {1}",
+                                new Object[] { factoryConfigFilename,
+                                        DEFAULT_FACTORIES_CONFIG_SCHEMA_FILE_PATH });
+                        return;
+                    }
+                }
 
                 loadFactories();
             } catch (Exception e) {
@@ -171,20 +170,15 @@ public class FactoryManager {
         private void loadFactories() {
 
             LidaFactoriesXmlDoc xmlDoc = new LidaFactoriesXmlDoc(factoryConfigFilename);
-//
-//            if (xmlDoc == null || !xmlDoc.hasValidContent()) {
-//                logger.log(
-//                        Level.WARNING,
-//                        "Failed to load LidaFactories configuration file {0}.  Document was unparseable or has invalid content.",
-//                        new Object[] { factoryConfigFilename });
-//            }
 
             List<LidaFactoryDef> factories = xmlDoc.getFactories();
 
             populateFactoryAliasMap(factories);
 
-            for (LidaFactoryDef factory : factories) {
-                initFactory(factory);
+            if (factories != null) {
+                for (LidaFactoryDef factory : factories) {
+                    initFactory(factory);
+                }
             }
         }
 
@@ -237,7 +231,7 @@ public class FactoryManager {
             if (dependencies == null || dependencies.isEmpty()) {
                 return;
             }
-            
+
             if (hasCircularDependency(factoryDef, null)) {
                 logger.log(
                         Level.WARNING,
