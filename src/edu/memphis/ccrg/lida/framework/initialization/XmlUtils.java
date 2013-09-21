@@ -11,6 +11,7 @@
 package edu.memphis.ccrg.lida.framework.initialization;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -20,6 +21,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
@@ -72,8 +76,7 @@ public class XmlUtils {
         try {
             // schema = factory.newSchema(schemaLocation);
             schema = factory.newSchema(new StreamSource(is));
-        }
-        catch (SAXException ex) {
+        } catch (SAXException ex) {
             logger.log(Level.WARNING, "The Schema file is not valid. {0}", ex.getMessage());
             ex.printStackTrace();
             return false;
@@ -90,11 +93,9 @@ public class XmlUtils {
             validator.validate(source);
             logger.log(Level.INFO, xmlFile + " is valid.");
             result = true;
-        }
-        catch (SAXException ex) {
+        } catch (SAXException ex) {
             logger.log(Level.WARNING, xmlFile + " is not valid because\n >>>" + ex.getMessage());
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             logger.log(Level.WARNING, xmlFile + " is not a valid file." + ex.getMessage());
         }
         return result;
@@ -143,15 +144,15 @@ public class XmlUtils {
         Integer i = null;
         try {
             i = Integer.parseInt(getTextValue(ele, tagName));
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             logger.log(Level.WARNING, "Cannot parse int value in tag {0}", tagName);
         }
         return i;
     }
 
     /**
-     * Returns whether specified {@link Element} contains a child node with specified tagName
+     * Returns whether specified {@link Element} contains a child node with
+     * specified tagName
      * 
      * @param ele
      *            {@link Element}
@@ -200,12 +201,13 @@ public class XmlUtils {
 
     /**
      * Reads typed parameters from xml element and returns them in a Map where
-     * the key is the parameter's String name and the value is the value of the parameter.
-     * Finds all tags named "param". Those tags should have two attributes, name and type.
-     * Valid parameters types are "int", "double", "boolean", and "string".
-     * If the value is not compatible with the specified type then value will be null, except
-     * in the case of a Boolean with an incompatible value, in which case the value will be False.
-     * If a parameter's value is not specified or empty then the value will be null.
+     * the key is the parameter's String name and the value is the value of the
+     * parameter. Finds all tags named "param". Those tags should have two
+     * attributes, name and type. Valid parameters types are "int", "double",
+     * "boolean", and "string". If the value is not compatible with the
+     * specified type then value will be null, except in the case of a Boolean
+     * with an incompatible value, in which case the value will be False. If a
+     * parameter's value is not specified or empty then the value will be null.
      * 
      * @param moduleElement
      *            Dom {@link Element}
@@ -224,26 +226,21 @@ public class XmlUtils {
 
                     if (type == null || "string".equalsIgnoreCase(type)) {
                         value = sValue;
-                    }
-                    else if ("int".equalsIgnoreCase(type)) {
+                    } else if ("int".equalsIgnoreCase(type)) {
                         try {
                             value = Integer.parseInt(sValue);
-                        }
-                        catch (NumberFormatException e) {
+                        } catch (NumberFormatException e) {
                             value = null;
                             logger.log(Level.FINE, e.toString(), TaskManager.getCurrentTick());
                         }
-                    }
-                    else if ("double".equalsIgnoreCase(type)) {
+                    } else if ("double".equalsIgnoreCase(type)) {
                         try {
                             value = Double.parseDouble(sValue);
-                        }
-                        catch (NumberFormatException e) {
+                        } catch (NumberFormatException e) {
                             value = null;
                             logger.log(Level.FINE, e.toString(), TaskManager.getCurrentTick());
                         }
-                    }
-                    else if ("boolean".equalsIgnoreCase(type)) {
+                    } else if ("boolean".equalsIgnoreCase(type)) {
                         value = Boolean.parseBoolean(sValue);
                     }
                 }
@@ -285,8 +282,7 @@ public class XmlUtils {
                 String value = child.getNodeValue().trim();
                 if (value.equalsIgnoreCase("")) {
                     return null;
-                }
-                else {
+                } else {
                     return value;
                 }
             }
@@ -374,12 +370,11 @@ public class XmlUtils {
             if (validateXmlFile(fileName, schemaFilePath)) {
                 // parse using builder to get DOM representation of the XML file
                 dom = db.parse(fileName);
+            } else {
+                logger.log(Level.WARNING, "Xml file invalid, file: " + fileName
+                        + " was not parsed");
             }
-            else {
-                logger.log(Level.WARNING, "Xml file invalid, file: " + fileName + " was not parsed");
-            }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage(), e);
         }
         return dom;
@@ -402,8 +397,7 @@ public class XmlUtils {
 
             // parse using builder to get DOM representation of the XML file
             dom = db.parse(new ByteArrayInputStream(xml.getBytes()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage(), e);
         }
         return dom;
@@ -414,15 +408,17 @@ public class XmlUtils {
     // Attributes
     //
     /**
-     * Get the value of an attribute of the given element with the given name as an integer, or return the given default
-     * value if the attribute is missing or not parseable as an integer.
+     * Get the value of an attribute of the given element with the given name as
+     * an integer, or return the given default value if the attribute is missing
+     * or not parseable as an integer.
      * 
      * @param element
      *            the element in which to find the attribute
      * @param name
      *            the name of the attribute
      * @param defaultValue
-     *            the value to return if the attribute value is not parseable as an integer
+     *            the value to return if the attribute value is not parseable as
+     *            an integer
      * @return the integer value of the attribute, or the default value
      */
     public static int getIntAttribute(Element element, String name, int defaultValue) {
@@ -430,8 +426,7 @@ public class XmlUtils {
         if (s != null) {
             try {
                 return Integer.parseInt(s);
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 // ignore
             }
         }
@@ -439,16 +434,18 @@ public class XmlUtils {
     }
 
     /**
-     * Get the value of an attribute of the given element with the given name as a boolean, or return the given default
-     * value if the attribute is missing or not parseable as a boolean. The {@link Boolean#parseBoolean} method is used
-     * to parse the value.
+     * Get the value of an attribute of the given element with the given name as
+     * a boolean, or return the given default value if the attribute is missing
+     * or not parseable as a boolean. The {@link Boolean#parseBoolean} method is
+     * used to parse the value.
      * 
      * @param element
      *            the element in which to find the attribute
      * @param name
      *            the name of the attribute
      * @param defaultValue
-     *            the value to return if the attribute value is not parseable as a boolean
+     *            the value to return if the attribute value is not parseable as
+     *            a boolean
      * @return the boolean value of the attribute, or the default value
      */
     public static boolean getBooleanAttribute(Element element, String name, boolean defaultValue) {
@@ -457,5 +454,71 @@ public class XmlUtils {
             return Boolean.parseBoolean(s);
         return defaultValue;
     }
-}
 
+    /**
+     * Consumes the contents of the specified XML file, and creates a new Java
+     * object of the specified class that will contain the consumed contents.
+     * 
+     * @param xmlFilePath
+     *            an absolute or relative path to the XML file
+     * @param clazz
+     *            the target class
+     * @return an object of the target class that is initialized with the
+     *         contents of the specified XML file
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T unmarshalXmlToObject(String xmlFilePath, Class<T> clazz) {
+        if (clazz == null) {
+            return null;
+        }
+
+        T result = null;
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            result = (T) jaxbUnmarshaller.unmarshal(new java.io.FileInputStream(xmlFilePath));
+
+        } catch (Exception e) {
+            logger.log(
+                    Level.WARNING,
+                    "Failed to unmarhall the contents of the XML file {0} to the target class {1}",
+                    new Object[] {xmlFilePath, clazz});
+        }
+
+        return result;
+    }
+
+    /**
+     * Creates a new XML file based on the contents and schema contained in the
+     * specified JAXB object.
+     * 
+     * @param object
+     *            the JAXB object
+     * @param xmlFilePath
+     *            an absolute or relative path to the XML file
+     */
+    public static <T> void marshalObjectToXml(Object object, String xmlFilePath) {
+        if (object == null) {
+            return;
+        }
+
+        try {
+
+            JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+            // Pretty print output
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+            File xmlFile = new File(xmlFilePath);
+            jaxbMarshaller.marshal(object, xmlFile);
+
+        } catch (Exception e) {
+            logger.log(
+                    Level.WARNING,
+                    "Failed to marhall the contents of the specified class {0} to the file {1}",
+                    new Object[] {object.getClass(), xmlFilePath});
+        }
+    }
+}
