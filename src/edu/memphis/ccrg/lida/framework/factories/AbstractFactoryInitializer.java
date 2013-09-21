@@ -105,7 +105,7 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
         if (factoryDef != null) {
             LidaFactoryConfig factoryConfig = factoryDef.getFactoryConfig();
             if (factoryConfig != null) {
-               factoryConfig.getFactoryObjects();
+               return factoryConfig.getFactoryObjects();
             }
         }
         
@@ -116,7 +116,7 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
         if (factoryDef != null) {
             LidaFactoryConfig factoryConfig = factoryDef.getFactoryConfig();
             if (factoryConfig != null) {
-               factoryConfig.getFactoryParams();
+               return factoryConfig.getFactoryParams();
             }
         }
         
