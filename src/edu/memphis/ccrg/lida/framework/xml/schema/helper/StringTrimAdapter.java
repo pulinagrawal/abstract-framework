@@ -9,21 +9,28 @@ package edu.memphis.ccrg.lida.framework.xml.schema.helper;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+/**
+ * A utility class to remove leading and trailing whitespace characters when
+ * marshalling or unmarshalling elements to/from an XML document.
+ * 
+ * @author Sean Kugele
+ * 
+ */
 public class StringTrimAdapter extends XmlAdapter<String, String> {
 
     @Override
-    public String unmarshal(String v) throws Exception {
-        if (v == null) {
+    public String unmarshal(String element) throws Exception {
+        if (element == null) {
             return null;
         }
-        return v.trim();
+        return element.trim();
     }
 
     @Override
-    public String marshal(String v) throws Exception {
-        if (v == null) {
+    public String marshal(String element) throws Exception {
+        if (element == null) {
             return null;
         }
-        return v.trim();
+        return element.trim();
     }
 }
