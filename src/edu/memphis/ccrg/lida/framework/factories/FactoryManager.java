@@ -7,7 +7,7 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.factories;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,9 +18,10 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import edu.memphis.ccrg.lida.framework.initialization.FactoryDef;
-import edu.memphis.ccrg.lida.framework.initialization.FactoryDef.XmlConfig;
+import edu.memphis.ccrg.lida.framework.initialization.GlobalInitializer;
 import edu.memphis.ccrg.lida.framework.initialization.XmlUtils;
+import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoriesXmlDoc;
+import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryDef;
 
 /**
  * The FactoryManager provides a registry for storing and retrieving factory
@@ -39,11 +40,17 @@ public class FactoryManager {
      */
     private static FactoryManager instance = new FactoryManager();
 
+    // TODO: A limitation of the current implementation is that we can only
+    // register a single implementation for each factory interface. It seems to
+    // be a completely reasonable use case to have multiple implementations for
+    // the same factory (i.e., PamStrategyFactory, ProcMemoryStrategyFactory,
+    // EpisodicMemoryStrategyFactory, etc.)
+
     /*
      * Map of Factory interfaces to registered implementations of those
      * interfaces
      */
-    private Map<Class<? extends Factory>, Object> factories = new HashMap<Class<? extends Factory>, Object>();
+    private Map<Class<? extends Factory>, InitializableFactory> factories = new HashMap<Class<? extends Factory>, InitializableFactory>();
 
     /*
      * Private constructor to prevent instantiation
@@ -94,123 +101,188 @@ public class FactoryManager {
         initializer.init();
     }
 
-    public Set<Class<? extends Factory>> listFactories() {
-       if (factories == null) {
-           return new HashSet<Class<? extends Factory>>();
-       }
-       
-       return factories.keySet();
+    /**
+     * Reset the FactoryManager to an uninitialized state.
+     */
+    public void clear() {
+        factories = new HashMap<Class<? extends Factory>, InitializableFactory>();
     }
-    
+
+    /**
+     * Returns a {@link Set} containing all of the {@link Factory} interfaces
+     * that have implementations registered with the FactoryManager.
+     * 
+     * @return the {@code Set} of {@link Factory} interfaces
+     */
+    public Set<Class<? extends Factory>> listFactories() {
+        if (factories == null) {
+            return new HashSet<Class<? extends Factory>>();
+        }
+
+        return new HashSet<Class<? extends Factory>>(factories.keySet());
+    }
+
     // An inner class to initialize the FactoryManager and its factories
     private class FactoryManagerInitializer {
-        private static final String FACTORY_CONFIG_PROPERTY_NAME = "lida.factory.config";
+        private static final String FACTORY_CONFIG_PROPERTY_NAME = "lida.factories.config";
         private static final String DEFAULT_FACTORY_CONFIG_XML_FILE_PATH = "configs/lidaFactoryConfig.xml";
-        private static final String DEFAULT_FACTORY_CONFIG_SCHEMA_FILE_PATH = "edu/memphis/ccrg/lida/framework/initialization/config/LidaFactories.xsd";
+        private static final String DEFAULT_FACTORIES_CONFIG_SCHEMA_FILE_PATH = "edu/memphis/ccrg/lida/framework/initialization/config/LidaFactoriesXMLSchema.xsd";
+
+        private final GlobalInitializer globalInitializer = GlobalInitializer.getInstance();
 
         private final String factoryConfigFilename;
 
         private final FactoryManager manager = FactoryManager.this;
 
+        // Map between factory aliases and the factory configurations that they
+        // correspond
+        private final Map<String, LidaFactoryDef> factoryAliasMap;
+
         public FactoryManagerInitializer(Properties p) {
             factoryConfigFilename = p.getProperty(FACTORY_CONFIG_PROPERTY_NAME,
                     DEFAULT_FACTORY_CONFIG_XML_FILE_PATH);
+
+            factoryAliasMap = new HashMap<String, LidaFactoryDef>();
         }
 
         public void init() {
-            org.w3c.dom.Document d = XmlUtils.parseXmlFile(factoryConfigFilename,
-                    DEFAULT_FACTORY_CONFIG_SCHEMA_FILE_PATH);
+            try {
+                // Verify the Lida factories configuration file conforms to the
+                // expected layout
+//                if (!XmlUtils.validateXmlFile(factoryConfigFilename,
+//                        DEFAULT_FACTORIES_CONFIG_SCHEMA_FILE_PATH)) {
+//                    logger.log(
+//                            Level.WARNING,
+//                            "LidaFactories configuration file {0} violates the expected XML schema defined in {1}",
+//                            new Object[] { factoryConfigFilename,
+//                                    DEFAULT_FACTORIES_CONFIG_SCHEMA_FILE_PATH });
+//                    return;
+//                }
 
-            if (d == null) {
-                logger.log(Level.SEVERE,
-                        "Failed to parse factories XML document. Factory data will not be loaded.");
-                return;
-            }
-
-            loadFactories(d);
-        }
-
-        private void loadFactories(org.w3c.dom.Document d) {
-            org.w3c.dom.Element root = d.getDocumentElement();
-            Map<String, FactoryDef> factoryMap = getFactories(root);
-
-            for (FactoryDef def : factoryMap.values()) {
-                initFactory(def, factoryMap);
-            }
-        }
-
-        private void initFactory(FactoryDef def, Map<String, FactoryDef> factoryMap) {
-            if (isFactoryInitialized(def)) {
-                return;
-            }
-
-            Set<String> dependencies = def.getDependencies();
-            if (dependencies != null) {
-                initDependencies(def, dependencies, factoryMap);
-            }
-
-            InitializableFactory factoryObject = createFactory(def);
-            Class<? extends Factory> factoryInterface = getFactoryInterface(def);
-
-            if (factoryObject == null || factoryInterface == null) {
-                logger.log(Level.WARNING, "Failed to initialize factory with name {0}.",
-                        new Object[] { def.getName() });
-                return;
-            }
-
-            // Initialize factory with factory data
-            factoryObject.init(def);
-
-            // Add factory to FactoryManager registry
-            manager.factories.put(factoryInterface, factoryObject);
-        }
-
-        private void initDependencies(FactoryDef def, Set<String> dependencies,
-                Map<String, FactoryDef> factoryMap) {
-            if (hasCircularDependency(def, factoryMap, null)) {
+                loadFactories();
+            } catch (Exception e) {
                 logger.log(
                         Level.WARNING,
-                        "Circular dependency discovered for factory {0}.  Factory will not be initialized.",
-                        new Object[] { def.getName() });
+                        "Failed to load LidaFactories configuration file {0}.  Encountered exception {1}.",
+                        new Object[] { factoryConfigFilename, e });
+            }
+        }
+
+        private void loadFactories() {
+
+            LidaFactoriesXmlDoc xmlDoc = new LidaFactoriesXmlDoc(factoryConfigFilename);
+//
+//            if (xmlDoc == null || !xmlDoc.hasValidContent()) {
+//                logger.log(
+//                        Level.WARNING,
+//                        "Failed to load LidaFactories configuration file {0}.  Document was unparseable or has invalid content.",
+//                        new Object[] { factoryConfigFilename });
+//            }
+
+            List<LidaFactoryDef> factories = xmlDoc.getFactories();
+
+            populateFactoryAliasMap(factories);
+
+            for (LidaFactoryDef factory : factories) {
+                initFactory(factory);
+            }
+        }
+
+        private void populateFactoryAliasMap(List<LidaFactoryDef> factories) {
+            if (factories == null) {
                 return;
             }
 
-            for (String factoryDependency : dependencies) {
-                FactoryDef dependDef = factoryMap.get(factoryDependency);
-                if (dependDef == null) {
-                    logger.log(
-                            Level.WARNING,
-                            "Unable to resolve factory dependency definition {0} for factory {1}.",
-                            new Object[] { factoryDependency, def.getName() });
-                    continue;
-                } else {
-                    initFactory(dependDef, factoryMap);
+            for (LidaFactoryDef factoryDef : factories) {
+                if (factoryDef != null) {
+                    String factoryName = factoryDef.getFactoryName();
+
+                    if (factoryName != null && !factoryName.isEmpty()) {
+                        factoryAliasMap.put(factoryName, factoryDef);
+                    }
                 }
             }
         }
 
-        private boolean hasCircularDependency(FactoryDef def,
-                Map<String, FactoryDef> factoryMap, Stack<String> predecessors) {
-            if (def == null) {
+        private void initFactory(LidaFactoryDef factoryDef) {
+            if (isFactoryInitialized(factoryDef)) {
+                return;
+            }
+
+            Set<String> dependencies = factoryDef.getDependencies();
+            initDependencies(factoryDef, dependencies);
+
+            InitializableFactory factory = createFactory(factoryDef);
+            Class<? extends Factory> factoryInterface = getFactoryInterface(factoryDef);
+
+            if (factory == null || factoryInterface == null) {
+                logger.log(Level.WARNING, "Failed to initialize factory with name {0}.",
+                        new Object[] { factoryDef.getFactoryName() });
+                return;
+            }
+
+            // Initialize factory with factory data
+            factory.init(factoryDef);
+
+            // Add factory to FactoryManager registry
+            manager.factories.put(factoryInterface, factory);
+
+            // Add to GlobalInitializer to resolve factory based on factory
+            // alias -- this is useful for initializing factories that depend on
+            // other factories
+            globalInitializer.setAttribute(factory.getName(), factoryInterface);
+        }
+
+        private void initDependencies(LidaFactoryDef factoryDef, Set<String> dependencies) {
+            if (dependencies == null || dependencies.isEmpty()) {
+                return;
+            }
+            
+            if (hasCircularDependency(factoryDef, null)) {
+                logger.log(
+                        Level.WARNING,
+                        "Circular dependency discovered for factory {0}.  Factory will not be initialized.",
+                        new Object[] { factoryDef.getFactoryName() });
+                return;
+            }
+
+            for (String factoryDependency : dependencies) {
+                LidaFactoryDef dependDef = factoryAliasMap.get(factoryDependency);
+                if (dependDef == null) {
+                    logger.log(
+                            Level.WARNING,
+                            "Unable to resolve factory dependency definition {0} for factory {1}.",
+                            new Object[] { factoryDependency, factoryDef.getFactoryName() });
+                    continue;
+                } else {
+                    initFactory(dependDef);
+                }
+            }
+        }
+
+        private boolean hasCircularDependency(LidaFactoryDef factoryDef,
+                Stack<String> predecessors) {
+            if (factoryDef == null) {
                 return false;
             }
 
             if (predecessors == null) {
                 predecessors = new Stack<String>();
             } else {
-                if (predecessors.contains(def.getName())) {
+                if (predecessors.contains(factoryDef.getFactoryName())) {
                     return true;
                 }
             }
 
-            predecessors.push(def.getName());
-            Set<String> dependencies = def.getDependencies();
-            if (dependencies == null) {
+            predecessors.push(factoryDef.getFactoryName());
+
+            Set<String> dependencies = factoryDef.getDependencies();
+            if (dependencies == null || dependencies.isEmpty()) {
                 return false;
             } else {
                 for (String dependency : dependencies) {
-                    FactoryDef dependDef = factoryMap.get(dependency);
-                    if (hasCircularDependency(dependDef, factoryMap, predecessors)) {
+                    LidaFactoryDef dependDef = factoryAliasMap.get(dependency);
+                    if (hasCircularDependency(dependDef, predecessors)) {
                         return true;
                     }
                 }
@@ -221,131 +293,62 @@ public class FactoryManager {
         }
 
         @SuppressWarnings("unchecked")
-        private Class<? extends Factory> getFactoryInterface(FactoryDef def) {
-            String type = def.getType();
+        private Class<? extends Factory> getFactoryInterface(LidaFactoryDef factoryDef) {
+            if (factoryDef == null) {
+                return null;
+            }
+
+            String factoryType = factoryDef.getFactoryType();
 
             Class<? extends Factory> fInterface = null;
             try {
-                fInterface = (Class<? extends Factory>) Class.forName(type);
+                fInterface = (Class<? extends Factory>) Class.forName(factoryType);
             } catch (ClassNotFoundException e) {
                 logger.log(Level.WARNING, "Unable to find factory type {0}.",
-                        new Object[] { def.getType() });
+                        new Object[] { factoryDef.getFactoryType() });
             }
 
             return fInterface;
         }
 
-        private boolean isFactoryInitialized(FactoryDef def) {
-            Class<? extends Factory> fInterface = getFactoryInterface(def);
-            if (manager.getFactory(fInterface) != null) {
+        private boolean isFactoryInitialized(LidaFactoryDef factoryDef) {
+            Class<? extends Factory> factoryInterface = getFactoryInterface(factoryDef);
+            if (manager.getFactory(factoryInterface) != null) {
                 return true;
             }
             return false;
         }
 
         @SuppressWarnings("unchecked")
-        private InitializableFactory createFactory(FactoryDef def) {
+        private InitializableFactory createFactory(LidaFactoryDef factoryDef) {
+            if (factoryDef == null) {
+                return null;
+            }
+
             InitializableFactory factory = null;
 
             try {
                 Class<? extends InitializableFactory> clazz = (Class<? extends InitializableFactory>) Class
-                        .forName(def.getClassname());
+                        .forName(factoryDef.getFactoryImpl());
 
-                // Call method to create singleton
-                Method getInstanceMethod = clazz.getMethod("getInstance", clazz);
-                factory = (InitializableFactory) getInstanceMethod.invoke(null);
+                Constructor<? extends InitializableFactory> constructor = clazz
+                        .getDeclaredConstructor();
+
+                // Factory may be a singleton with a protected or private
+                // constructor. This bypasses the access modifier check
+                constructor.setAccessible(true);
+
+                factory = (InitializableFactory) constructor.newInstance();
+
             } catch (Exception e) {
                 logger.log(
                         Level.SEVERE,
                         "Unable to instantiate class {0} of factory type {1}. Factory will not be instantiated.",
-                        new Object[] { def.getClassname(), def.getType() });
+                        new Object[] { factoryDef.getFactoryImpl(), factoryDef.getFactoryType() });
                 return null;
             }
 
             return factory;
-        }
-
-        private Map<String, FactoryDef> getFactories(org.w3c.dom.Element root) {
-
-            Map<String, FactoryDef> factories = new HashMap<String, FactoryDef>();
-            List<org.w3c.dom.Element> list = XmlUtils.getChildrenInGroup(root, "factories",
-                    "factory");
-            if (list != null && list.size() > 0) {
-                for (org.w3c.dom.Element e : list) {
-                    FactoryDef factory = getFactoryDef(e);
-                    factories.put(factory.getName(), factory);
-                }
-            }
-
-            return factories;
-        }
-
-        private FactoryDef getFactoryDef(org.w3c.dom.Element e) {
-            FactoryDef factory = new FactoryDef();
-
-            factory.setName(getFactoryName(e));
-            factory.setType(getFactoryType(e));
-            factory.setClassname(getFactoryClassname(e));
-            factory.setConfig(getFactoryConfig(e));
-            factory.setDependencies(getFactoryDependencies(e));
-            factory.setParams(getFactoryParams(e));
-
-            return factory;
-        }
-
-        private String getFactoryName(org.w3c.dom.Element e) {
-            String factoryName = e.getAttribute("name");
-            return factoryName;
-        }
-
-        private String getFactoryType(org.w3c.dom.Element e) {
-            return XmlUtils.getTextValue(e, "type");
-        }
-
-        private String getFactoryClassname(org.w3c.dom.Element e) {
-            return XmlUtils.getTextValue(e, "class");
-        }
-
-        private XmlConfig getFactoryConfig(org.w3c.dom.Element e) {
-            org.w3c.dom.Element configEle = XmlUtils.getChild(e, "config");
-            if (configEle == null) {
-                return null;
-            }
-            XmlConfig newConfig = new XmlConfig();
-
-            newConfig.setFilename(getFactoryConfigFilename(configEle));
-            newConfig.setSchema(getFactoryConfigSchema(configEle));
-
-            return newConfig;
-        }
-
-        private String getFactoryConfigFilename(org.w3c.dom.Element e) {
-            return XmlUtils.getTextValue(e, "filename");
-        }
-
-        private String getFactoryConfigSchema(org.w3c.dom.Element e) {
-            return XmlUtils.getTextValue(e, "schema");
-        }
-
-        private Set<String> getFactoryDependencies(org.w3c.dom.Element e) {
-            Set<String> dependencies = new HashSet<String>();
-            List<org.w3c.dom.Element> list = XmlUtils.getChildrenInGroup(e, "dependencies",
-                    "dependency");
-            if (list != null && list.size() > 0) {
-                for (org.w3c.dom.Element dependEle : list) {
-                    String dependency = dependEle.getNodeValue();
-                    if (dependency == null || dependency.isEmpty()) {
-                        continue;
-                    }
-                    dependencies.add(dependency);
-                }
-            }
-
-            return dependencies;
-        }
-
-        private Map<String, Object> getFactoryParams(org.w3c.dom.Element e) {
-            return XmlUtils.getTypedParams(e);
         }
     }
 }
