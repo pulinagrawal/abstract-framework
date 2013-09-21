@@ -10,10 +10,12 @@
  */
 package edu.memphis.ccrg.lida.framework.initialization;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +38,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
+
+import com.sun.org.apache.xerces.internal.dom.DOMInputImpl;
 
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
 
@@ -65,6 +71,9 @@ public class XmlUtils {
         boolean result = false;
         // 1. Lookup a factory for the W3C XML Schema language
         SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+ 
+        // Register custom LSResourceResolver
+        factory.setResourceResolver(new XmlUtils.CustomSchemaResourceResolver());
 
         // 2. Compile the schema.
         // Here the schema is loaded from a java.io.File, but you could use
@@ -76,6 +85,7 @@ public class XmlUtils {
         try {
             // schema = factory.newSchema(schemaLocation);
             schema = factory.newSchema(new StreamSource(is));
+
         } catch (SAXException ex) {
             logger.log(Level.WARNING, "The Schema file is not valid. {0}", ex.getMessage());
             ex.printStackTrace();
@@ -483,7 +493,7 @@ public class XmlUtils {
             logger.log(
                     Level.WARNING,
                     "Failed to unmarhall the contents of the XML file {0} to the target class {1}",
-                    new Object[] {xmlFilePath, clazz});
+                    new Object[] { xmlFilePath, clazz });
         }
 
         return result;
@@ -518,7 +528,28 @@ public class XmlUtils {
             logger.log(
                     Level.WARNING,
                     "Failed to marhall the contents of the specified class {0} to the file {1}",
-                    new Object[] {object.getClass(), xmlFilePath});
+                    new Object[] { object.getClass(), xmlFilePath });
+        }
+    }
+
+    // resource resolver for processing "includes" in the XSDs
+    private static class CustomSchemaResourceResolver implements LSResourceResolver {
+
+        private static final String CLASSPATH = "edu/memphis/ccrg/lida/framework/initialization/config/";
+
+        @Override
+        public LSInput resolveResource(String type, String namespaceURI, String publicId,
+                String systemId, String baseURI) {
+
+            LSInput input = new DOMInputImpl();
+            try {
+                InputStream is = ClassLoader.getSystemResourceAsStream(CLASSPATH + systemId);
+                input.setByteStream(is);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+            return input;
         }
     }
 }
