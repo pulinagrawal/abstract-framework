@@ -53,10 +53,10 @@ public class LearnableImpl extends ActivatibleImpl implements Learnable {
 		baseLevelActivation = DEFAULT_BASE_LEVEL_ACTIVATION;
 		learnableRemovalThreshold = DEFAULT_LEARNABLE_REMOVAL_THRESHOLD;
 		baseLevelIncentiveSalience=DEFAULT_BASE_LEVEL_INCENTIVE_SALIENCE;
-		baseLevelDecayStrategy = strategyFactory.getDefaultDecayStrategy();
-		baseLevelExciteStrategy = strategyFactory.getDefaultExciteStrategy();
+		baseLevelDecayStrategy = strategyFactory.getStrategy("default", DecayStrategy.class);
+		baseLevelExciteStrategy = strategyFactory.getStrategy("default", ExciteStrategy.class);
 		totalActivationStrategy = (TotalActivationStrategy) strategyFactory
-				.getStrategy(DEFAULT_TOTAL_ACTIVATION_TYPE);
+				.getStrategy(DEFAULT_TOTAL_ACTIVATION_TYPE, TotalActivationStrategy.class);
 	}
 
 	/**
@@ -142,15 +142,17 @@ public class LearnableImpl extends ActivatibleImpl implements Learnable {
 	public void init() {
 		baseLevelActivation=getParam("learnable.baseLevelActivation", DEFAULT_BASE_LEVEL_ACTIVATION);
 		learnableRemovalThreshold=getParam("learnable.baseLevelRemovalThreshold",DEFAULT_LEARNABLE_REMOVAL_THRESHOLD);
-		String decayName=getParam("learnable.baseLevelDecayStrategy", strategyFactory.getDefaultDecayType());
-		baseLevelDecayStrategy = strategyFactory.getDecayStrategy(decayName);
-		String exciteName=getParam("learnable.baseLevelExciteStrategy",strategyFactory.getDefaultExciteType());
-		baseLevelExciteStrategy = strategyFactory.getExciteStrategy(exciteName);
+		String decayName=getParam("learnable.baseLevelDecayStrategy", "default");
+		baseLevelDecayStrategy = strategyFactory.getStrategy(decayName, DecayStrategy.class);
+		String exciteName=getParam("learnable.baseLevelExciteStrategy", "default");
+		baseLevelExciteStrategy = strategyFactory.getStrategy(exciteName, ExciteStrategy.class);
 		String totalActivationName=getParam("learnable.totalActivationStrategy",DEFAULT_TOTAL_ACTIVATION_TYPE);
-		totalActivationStrategy =(TotalActivationStrategy)strategyFactory.getStrategy(totalActivationName);
-		if (totalActivationStrategy==null) {
-			totalActivationStrategy=(TotalActivationStrategy)strategyFactory.getStrategy(DEFAULT_TOTAL_ACTIVATION_TYPE);
-		}
+        totalActivationStrategy = (TotalActivationStrategy) strategyFactory.getStrategy(
+                totalActivationName, TotalActivationStrategy.class);
+        if (totalActivationStrategy == null) {
+            totalActivationStrategy = (TotalActivationStrategy) strategyFactory.getStrategy(
+                    DEFAULT_TOTAL_ACTIVATION_TYPE, TotalActivationStrategy.class);
+        }
 	}
 
 	@Override

@@ -56,7 +56,7 @@ public class BehaviorNetwork extends FrameworkModuleImpl implements
 	private static final double DEFAULT_PREDECESSOR_EXCITATION_FACTOR = 0.1;
 	private static final double DEFAULT_CONFLICTOR_EXCITATION_FACTOR = 0.04;
 	private static final double DEFAULT_CONTEXT_SATISFACTION_THRESHOLD = 0.0;
-	private static final String DEFAULT_CANDIDATE_THRESHOLD_DECAY = "defaultDecay";
+	private static final String DEFAULT_CANDIDATE_THRESHOLD_DECAY = "default";
 	private static final String DEFAULT_BEHAVIOR_DECAY_NAME = "behaviorDecay";
 
 	/*
@@ -197,11 +197,11 @@ public class BehaviorNetwork extends FrameworkModuleImpl implements
 		StrategyFactory factory = FactoryManager.getInstance().getFactory(StrategyFactory.class);
 		String name = getParam("actionselection.candidateThresholdDecayName",
 				DEFAULT_CANDIDATE_THRESHOLD_DECAY);
-		thresholdReductionStrategy = factory.getDecayStrategy(name);
+		thresholdReductionStrategy = factory.getStrategy(name, DecayStrategy.class);
 
 		name = getParam("actionselection.behaviorDecayName",
 				DEFAULT_BEHAVIOR_DECAY_NAME);
-		behaviorDecayStrategy = factory.getDecayStrategy(name);
+		behaviorDecayStrategy = factory.getStrategy(name, DecayStrategy.class);
 
 		taskSpawner.addTask(new BehaviorNetworkBackgroundTask());
 	}

@@ -48,8 +48,7 @@ public class GlobalWorkspaceImpl extends FrameworkModuleImpl implements
 	private static final FactoryManager factoryManager = FactoryManager.getInstance();
 	private static final StrategyFactory factory = factoryManager.getFactory(StrategyFactory.class);
 	private static final Integer DEFAULT_REFRACTORY_PERIOD = 40;
-	private static final String DEFAULT_COALITION_DECAY = factory
-			.getDefaultDecayType();
+	private static final String DEFAULT_COALITION_DECAY = "default";
 	private static final double DEFAULT_COALITION_REMOVAL_THRESHOLD = 0.0;
 
 	private double coalitionRemovalThreshold;
@@ -94,9 +93,9 @@ public class GlobalWorkspaceImpl extends FrameworkModuleImpl implements
 				"globalWorkspace.coalitionDecayStrategy",
 				DEFAULT_COALITION_DECAY);
 		coalitionDecayStrategy = factory
-				.getDecayStrategy(coalitionDecayStrategyName);
+				.getStrategy(coalitionDecayStrategyName, DecayStrategy.class);
 		if (coalitionDecayStrategy == null) {
-			coalitionDecayStrategy = factory.getDefaultDecayStrategy();
+			coalitionDecayStrategy = factory.getStrategy("default", DecayStrategy.class);
 			logger.log(Level.WARNING,
 					"failed to obtain decay strategy {0}, using default",
 					coalitionDecayStrategyName);

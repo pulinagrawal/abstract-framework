@@ -24,6 +24,7 @@ import edu.memphis.ccrg.lida.framework.FrameworkModule;
 import edu.memphis.ccrg.lida.framework.ModuleListener;
 import edu.memphis.ccrg.lida.framework.ModuleName;
 import edu.memphis.ccrg.lida.framework.factories.DefaultFrameworkTaskFactory;
+import edu.memphis.ccrg.lida.framework.factories.FactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.FrameworkTaskFactory;
 import edu.memphis.ccrg.lida.framework.tasks.FrameworkTask;
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
@@ -57,6 +58,8 @@ public class AgentXmlFactory implements AgentFactory {
 	private static final String DEFAULT_XML_FILE_PATH = "configs/agent.xml";
 	private static final String DEFAULT_SCHEMA_FILE_PATH = "edu/memphis/ccrg/lida/framework/initialization/config/LidaXMLSchema.xsd";
 	private static final String AGENT_DATA_PROPERTY_NAME = "lida.agentdata";
+	
+	private static final FactoryManager factoryManager = FactoryManager.getInstance();
 
 	@Override
 	public Agent getAgent(Properties properties) {
@@ -771,7 +774,7 @@ public class AgentXmlFactory implements AgentFactory {
 	 */
 	static void initializeTasks(Map<ModuleName, FrameworkModule> moduleMap,
 			List<TaskData> toRun) {
-		FrameworkTaskFactory factory = DefaultFrameworkTaskFactory.getInstance();
+		FrameworkTaskFactory factory = factoryManager.getFactory(FrameworkTaskFactory.class);
 		for (TaskData td : toRun) {
 			FrameworkTask task = factory.getFrameworkTask(td.tasktype,
 					td.params, moduleMap);

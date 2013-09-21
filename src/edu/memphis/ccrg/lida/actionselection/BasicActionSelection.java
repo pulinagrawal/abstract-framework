@@ -64,7 +64,9 @@ public class BasicActionSelection extends FrameworkModuleImpl implements
 
 	private static final double DEFAULT_THRESHOLD_DECAY_RATE = 0.1;
 	private double thresholdDecayRate;
-
+	
+    private static final String DEFAULT_BEHAVIOR_DECAY = "default";
+    
 	/**
 	 * Default constructor
 	 */
@@ -111,9 +113,8 @@ public class BasicActionSelection extends FrameworkModuleImpl implements
 		taskSpawner.addTask(new ActionSelectionBackgroundTask(ticksPerRun));
 
 		String decayType = (String) getParam(
-				"actionSelection.behaviorDecayStrategy", strategyFactory
-						.getDefaultDecayType());
-		behaviorDecayStrategy = strategyFactory.getDecayStrategy(decayType);
+				"actionSelection.behaviorDecayStrategy", DEFAULT_BEHAVIOR_DECAY); 
+		behaviorDecayStrategy = strategyFactory.getStrategy(decayType, DecayStrategy.class);
 
 		thresholdDecayRate = (Double) getParam(
 				"actionSelection.thresholdDecayRate",

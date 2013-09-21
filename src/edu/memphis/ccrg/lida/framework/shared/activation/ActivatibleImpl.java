@@ -45,8 +45,8 @@ public class ActivatibleImpl extends InitializableImpl implements Activatible {
 		activation = DEFAULT_ACTIVATION;
 		removalThreshold = DEFAULT_ACTIVATIBLE_REMOVAL_THRESHOLD;
 		incentiveSalience = DEFAULT_INCENTIVE_SALIENCE;
-		decayStrategy = strategyFactory.getDefaultDecayStrategy();
-		exciteStrategy = strategyFactory.getDefaultExciteStrategy();
+		decayStrategy = strategyFactory.getStrategy("default", DecayStrategy.class);
+		exciteStrategy = strategyFactory.getStrategy("default", ExciteStrategy.class);
 	}
 
 	/**
