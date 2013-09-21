@@ -122,7 +122,7 @@ public class FactoryManager {
         private static final String DEFAULT_FACTORY_CONFIG_XML_FILE_PATH = "configs/lidaFactoryConfig.xml";
         private static final String DEFAULT_FACTORIES_CONFIG_SCHEMA_FILE_PATH = "edu/memphis/ccrg/lida/framework/initialization/config/LidaFactoriesXMLSchema.xsd";
 
-        private static final boolean VALIDATE_XML = true;
+        private static final boolean VALIDATE_XML = false;
 
         private final GlobalInitializer globalInitializer = GlobalInitializer.getInstance();
 
