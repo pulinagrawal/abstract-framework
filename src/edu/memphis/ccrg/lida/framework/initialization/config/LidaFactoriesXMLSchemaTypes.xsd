@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://ccrg.cs.memphis.edu/LidaFactoriesXMLSchema"
+	elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://ccrg.cs.memphis.edu/LidaFactoriesXMLSchema"
+	xmlns:lida="http://ccrg.cs.memphis.edu/LidaXMLSchema">
+
+	<xs:import namespace="http://ccrg.cs.memphis.edu/LidaXMLSchema"
+		schemaLocation="LidaXMLSchema.xsd" />
+
+	<xs:complexType name="factory">
+		<xs:all>
+			<xs:element name="factoryType" type="xs:string" />
+			<xs:element name="factoryImpl" type="xs:string" />
+			<xs:element name="factoryConfig" type="tns:factoryConfig" />
+		</xs:all>
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="depends" type="xs:string" />
+	</xs:complexType>
+
+	<xs:complexType name="factoryConfig">
+		<xs:sequence>
+			<xs:element name="params" type="lida:params" minOccurs="0" />
+			<xs:element name="factoryObjects" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="factoryObject" type="tns:factoryObject"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="type" type="tns:factoryConfigType"
+			use="required" />
+		<xs:attribute name="filename" type="xs:string" />
+	</xs:complexType>
+
+	<xs:complexType name="factoryObject">
+		<xs:all>
+			<xs:element name="type" type="xs:string" />
+			<xs:element name="impl" type="xs:string" />
+			<xs:element name="params">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="param" type="lida:param" nillable="true"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="name" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:simpleType name="factoryConfigType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="local" />
+			<xs:enumeration value="external" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema elementFormDefault="qualified" version="1.0"
+	targetNamespace="http://ccrg.cs.memphis.edu/LidaFactoriesXMLSchema"
+	xmlns:lida="http://ccrg.cs.memphis.edu/LidaXMLSchema" xmlns:tns="http://ccrg.cs.memphis.edu/LidaFactoriesXMLSchema"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:include schemaLocation="LidaFactoriesXMLSchemaTypes.xsd" />
+
+	<xs:import namespace="http://ccrg.cs.memphis.edu/LidaXMLSchema"
+		schemaLocation="LidaXMLSchemaTypes.xsd" />
+
+	<xs:element name="lidaFactories">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="factory" type="tns:factory" maxOccurs="unbounded"
+					minOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>
+
