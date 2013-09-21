@@ -7,27 +7,25 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.factories;
 
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import edu.memphis.ccrg.lida.framework.initialization.FactoryDef;
-import edu.memphis.ccrg.lida.framework.initialization.FactoryDef.XmlConfig;
-import edu.memphis.ccrg.lida.framework.initialization.StrategyDef;
-import edu.memphis.ccrg.lida.framework.initialization.XmlUtils;
-import edu.memphis.ccrg.lida.framework.strategies.DecayStrategy;
-import edu.memphis.ccrg.lida.framework.strategies.ExciteStrategy;
 import edu.memphis.ccrg.lida.framework.strategies.Strategy;
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
+import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryDef;
+import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryObject;
+import edu.memphis.ccrg.lida.framework.xml.schema.LidaParam;
 
 /**
- * @author Sean Kugele
+ * A default implementation of the {@link StrategyFactory} interface. Instances
+ * of this class will be accessible via the {@link FactoryManager}, and will be
+ * configured using the Lida XML configuration files.
  * 
+ * @author Sean Kugele
  */
 public class DefaultStrategyFactory implements StrategyFactory {
     private static final Logger logger = Logger.getLogger(DefaultStrategyFactory.class
@@ -36,58 +34,34 @@ public class DefaultStrategyFactory implements StrategyFactory {
     private static final String FACTORY_NAME = "StrategyFactory";
 
     /*
-     * Sole instance of this class that will be used.
-     */
-    private static DefaultStrategyFactory instance = new DefaultStrategyFactory();
-
-    /*
      * Map of all the strategies (of any type) available to this factory
      */
-    private Map<String, StrategyDef> strategies = new HashMap<String, StrategyDef>();
+    private final Map<FactoryKey, Strategy> strategies = new HashMap<FactoryKey, Strategy>();
 
-    /*
-     * Private constructor to prevent instantiation
-     */
-    private DefaultStrategyFactory() {
+    // Only the FactoryManager and subclasses should have access
+    protected DefaultStrategyFactory() {
+
     }
 
-    /**
-     * Returns the sole instance of this factory. Implements the Singleton
-     * pattern.
-     * 
-     * @return the sole {@link DefaultFrameworkTaskFactory} instance of this
-     *         class
-     */
-    public static DefaultStrategyFactory getInstance() {
-        return instance;
-    }
-
+    @SuppressWarnings("unchecked")
     @Override
-    public Strategy getStrategy(String type, Map<String, ? extends Object> params) {
-        return getStrategy(type, null);
-    }
+    public <T extends Strategy> T getStrategy(String name, Class<T> type) {
+        if (!containsStrategy(name, type)) {
+            logger.log(Level.WARNING,
+                    "Factory does not contain a strategy with name {1} and type {2}",
+                    new Object[] { TaskManager.getCurrentTick(), name, type });
 
-    @Override
-    public Strategy getStrategy(String type) {
-        Strategy d = null;
-        StrategyDef sd = strategies.get(type);
-        if (sd != null) {
-            d = sd.getInstance();
-        } else {
-            logger.log(Level.WARNING, "Factory does not contain strategy of type {1}",
-                    new Object[] { TaskManager.getCurrentTick(), type });
+            return null;
         }
-        return d;
+
+        FactoryKey key = new FactoryKey(name, type);
+        return (T) strategies.get(key);
     }
 
     @Override
-    public boolean containsStrategy(String type) {
-        return strategies.containsKey(type);
-    }
-
-    @Override
-    public void addStrategyType(StrategyDef strategyDef) {
-        strategies.put(strategyDef.getName(), strategyDef);
+    public <T extends Strategy> boolean containsStrategy(String name, Class<T> type) {
+        FactoryKey key = new FactoryKey(name, type);
+        return strategies.containsKey(key);
     }
 
     @Override
@@ -96,7 +70,7 @@ public class DefaultStrategyFactory implements StrategyFactory {
     }
 
     @Override
-    public void init(FactoryDef factoryDef) {
+    public void init(LidaFactoryDef factoryDef) {
         FactoryInitializer<StrategyFactory> initializer = new Initializer(factoryDef);
         initializer.init();
     }
@@ -106,103 +80,141 @@ public class DefaultStrategyFactory implements StrategyFactory {
      */
     private class Initializer extends AbstractFactoryInitializer<StrategyFactory> {
 
-        public Initializer(FactoryDef factoryDef) {
+        private final List<LidaParam> params;
+        private final List<LidaFactoryObject> objects;
+
+        public Initializer(LidaFactoryDef factoryDef) {
             super(DefaultStrategyFactory.this, factoryDef);
+
+            params = super.getFactoryParams();
+            objects = super.getFactoryObjects();
         }
 
         @Override
         public void loadData() {
-            XmlConfig config = factoryDef.getConfig();
-
-            Document dom = XmlUtils.parseXmlFile(config.getFilename(), config.getSchema());
-            Element docEle = dom.getDocumentElement();
-
-            Map<String, StrategyDef> strategies = getStrategies(docEle);
-            fillStrategies(strategies);
+            loadFactoryParams();
+            loadFactoryObjects();
         }
 
-        private void fillStrategies(Map<String, StrategyDef> strategies) {
-            for (StrategyDef sd : strategies.values()) {
-                factory.addStrategyType(sd);
+        private void loadFactoryParams() {
+            if (params == null || params.isEmpty()) {
+                return;
+            }
+
+            // No parameters are accepted for DefaultStrategyFactory at the
+            // moment so just log if one was set in XML
+            for (LidaParam param : params) {
+                logger.log(Level.WARNING, "Unrecognized factory parameter in initializer: {1}",
+                        new Object[] { TaskManager.getCurrentTick(), param.getName() });
             }
         }
 
-        /**
-         * Reads in and creates all {@link StrategyDef}s specified in
-         * {@link Element}
-         * 
-         * @param element
-         *            Dom element
-         * @return a Map with the {@link StrategyDef} indexed by name
-         */
-        private Map<String, StrategyDef> getStrategies(Element element) {
-            Map<String, StrategyDef> strat = new HashMap<String, StrategyDef>();
-            List<Element> list = XmlUtils.getChildrenInGroup(element, "strategies", "strategy");
-            if (list != null && list.size() > 0) {
-                for (Element e : list) {
-                    StrategyDef strategy = getStrategyDef(e);
-                    strat.put(strategy.getName(), strategy);
-                }
+        private void loadFactoryObjects() {
+            if (objects == null || objects.isEmpty()) {
+                return;
             }
-            return strat;
+
+            for (LidaFactoryObject obj : objects) {
+                FactoryKey key = createFactoryObjectKey(obj);
+                Strategy strategy = createStrategy(obj);
+                
+                // Initialize strategy parameters
+                initStrategy(strategy, obj);
+                
+                // Add to strategy map in outer class
+                strategies.put(key, strategy);
+            }
         }
 
-        /**
-         * @param e
-         *            Dom element
-         * @return the {@link Strategy} definition
-         */
-        private StrategyDef getStrategyDef(Element e) {
-            StrategyDef strategy = new StrategyDef();
-            String className = XmlUtils.getTextValue(e, "class");
-            String name = e.getAttribute("name");
-            String type = e.getAttribute("type");
-            boolean fweight = Boolean.parseBoolean(e.getAttribute("flyweight"));
-            Map<String, Object> params = XmlUtils.getTypedParams(e);
+        private FactoryKey createFactoryObjectKey(LidaFactoryObject factoryObject) {
+            if (factoryObject == null) {
+                return null;
+            }
 
-            strategy.setClassName(className.trim());
-            strategy.setName(name.trim());
-            strategy.setType(type.trim());
-            strategy.setFlyWeight(fweight);
-            strategy.setParams(params);
+            String name = factoryObject.getName();
+            String type = factoryObject.getObjectType();
+
+            Class<?> clazz = null;
+            try {
+                clazz = Class.forName(type);
+            } catch (ClassNotFoundException e) {
+                logger.log(Level.WARNING, "Unable to resolve interface {1}.", new Object[] {
+                        TaskManager.getCurrentTick(), type });
+
+                return null;
+            }
+
+            return new FactoryKey(name, clazz);
+        }
+
+        private Strategy createStrategy(LidaFactoryObject factoryObject) {
+            Strategy strategy = null;
+
+            try {
+                @SuppressWarnings("unchecked")
+                Class<? extends Strategy> clazz = (Class<? extends Strategy>) Class
+                        .forName(factoryObject.getObjectImpl());
+
+                Constructor<? extends Strategy> constructor = clazz.getDeclaredConstructor();
+
+                strategy = constructor.newInstance();
+
+            } catch (Exception e) {
+                logger.log(Level.WARNING,
+                        "Unable to instantiate class {1} of strategy type {2}.", new Object[] {
+                                TaskManager.getCurrentTick(), factoryObject.getObjectImpl(),
+                                factoryObject.getObjectType() });
+
+                return null;
+            }
 
             return strategy;
         }
-    }
 
-    @Override
-    public DecayStrategy getDecayStrategy(String decayType) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        private void initStrategy(Strategy strategy, LidaFactoryObject factoryObject) {
+            List<LidaParam> params = factoryObject.getObjectParams();
 
-    @Override
-    public DecayStrategy getDefaultDecayStrategy() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+            if (params == null || params.isEmpty()) {
+                return;
+            }
+            
+            Map<String, Object> typedParams = getTypedParams(params);
+            strategy.init(typedParams);
+        }
 
-    @Override
-    public ExciteStrategy getDefaultExciteStrategy() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        // TODO: Move this elsewhere so that all factories can share
+        public Map<String, Object> getTypedParams(List<LidaParam> params) {
+            Map<String, Object> prop = new HashMap<String, Object>();
+            for (LidaParam param : params) {
+                String name = param.getName();
+                String type = param.getType();
+                String sValue = param.getValue();
+                Object value = sValue;
+                if (sValue != null) {
 
-    @Override
-    public String getDefaultDecayType() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getDefaultExciteType() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ExciteStrategy getExciteStrategy(String exciteName) {
-        // TODO Auto-generated method stub
-        return null;
+                    if (type == null || "string".equalsIgnoreCase(type)) {
+                        value = sValue;
+                    } else if ("int".equalsIgnoreCase(type)) {
+                        try {
+                            value = Integer.parseInt(sValue);
+                        } catch (NumberFormatException e) {
+                            value = null;
+                            logger.log(Level.FINE, e.toString(), TaskManager.getCurrentTick());
+                        }
+                    } else if ("double".equalsIgnoreCase(type)) {
+                        try {
+                            value = Double.parseDouble(sValue);
+                        } catch (NumberFormatException e) {
+                            value = null;
+                            logger.log(Level.FINE, e.toString(), TaskManager.getCurrentTick());
+                        }
+                    } else if ("boolean".equalsIgnoreCase(type)) {
+                        value = Boolean.parseBoolean(sValue);
+                    }
+                }
+                prop.put(name, value);
+            }
+            return prop;
+        }
     }
 }

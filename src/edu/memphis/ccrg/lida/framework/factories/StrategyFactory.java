@@ -7,81 +7,55 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.factories;
 
-import java.util.Map;
-
-import edu.memphis.ccrg.lida.framework.initialization.FrameworkTaskDef;
-import edu.memphis.ccrg.lida.framework.initialization.StrategyDef;
-import edu.memphis.ccrg.lida.framework.strategies.DecayStrategy;
-import edu.memphis.ccrg.lida.framework.strategies.ExciteStrategy;
 import edu.memphis.ccrg.lida.framework.strategies.Strategy;
 import edu.memphis.ccrg.lida.framework.tasks.FrameworkTask;
 
 /**
+ * The interface for a StrategyFactory. A StrategyFactory supplies objects
+ * implementing the {@link Strategy} interface. The details of the object
+ * creation may be parameterized based on details in an XML configuration file
+ * for the factory. <br>
+ * <br>
+ * Classes implementing the StrategyFactory interface must implement the
+ * {@link InitializableFactory}.
+ * 
  * @author Sean Kugele
  * 
  */
 public interface StrategyFactory extends InitializableFactory {
 
     /**
-     * @param type
-     * @return
-     */
-    public Strategy getStrategy(String type);
-
-    /**
-     * @param type
-     * @param params
-     * @return
-     */
-    public Strategy getStrategy(String type, Map<String, ? extends Object> params);
-
-    /**
-     * Adds the {@link StrategyDef} type.
+     * Returns an implementation matching the requested alias and type, or
+     * {@code null} if the factory does not contain a matching {@link Strategy}.
      * 
-     * @param strategyDef
-     *            {@link StrategyDef}
-     */
-    public void addStrategyType(StrategyDef strategyDef);
-    
-    /**
-     * Returns whether this factory contains specified {@link Strategy} type.
+     * @param alias
+     *            an alias for the strategy (set in the XML factory
+     *            configuration)
      * 
      * @param type
-     *            name of strategy type
-     * @return true if factory contains type or false if not
+     *            the interface corresponding to the desired {@code Strategy}
+     *            implementation
+     * 
+     * @return an object that implements the desired type and is parameterized
+     *         based on the corresponding alias in the LidaFactories XML
+     *         configuration.
      */
-    public boolean containsStrategy(String type);
+    public <T extends Strategy> T getStrategy(String alias, Class<T> type);
 
     /**
-     * @param decayType
-     * @return
+     * Returns whether this factory contains type specified {@link Strategy}
+     * type.
+     * 
+     * @param alias
+     *            an alias for the strategy (set in the XML factory
+     *            configuration)
+     * 
+     * @param type
+     *            the interface corresponding to the desired {@code Strategy}
+     *            implementation
+     * 
+     * @return true if factory contains an implementation corresponding to the
+     *         specified alias and type
      */
-    public DecayStrategy getDecayStrategy(String decayType);
-
-    /**
-     * @return
-     */
-    public DecayStrategy getDefaultDecayStrategy();
-
-    /**
-     * @return
-     */
-    public ExciteStrategy getDefaultExciteStrategy();
-
-    /**
-     * @return
-     */
-    public String getDefaultDecayType();
-
-    /**
-     * @return
-     */
-    public String getDefaultExciteType();
-
-    /**
-     * @param exciteName
-     * @return
-     */
-    public ExciteStrategy getExciteStrategy(String exciteName);
+    public <T extends Strategy> boolean containsStrategy(String alias, Class<T> type);
 }
-
