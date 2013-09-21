@@ -38,9 +38,9 @@ public class DefaultStrategyFactory implements StrategyFactory {
      */
     private final Map<FactoryKey, Strategy> strategies = new HashMap<FactoryKey, Strategy>();
 
-    // Only the FactoryManager and subclasses should have access
-    protected DefaultStrategyFactory() {
-
+    // Package private. Should be instantiated in the FactoryManager
+    DefaultStrategyFactory() {
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -117,10 +117,10 @@ public class DefaultStrategyFactory implements StrategyFactory {
             for (LidaFactoryObject obj : objects) {
                 FactoryKey key = createFactoryObjectKey(obj);
                 Strategy strategy = createStrategy(obj);
-                
+
                 // Initialize strategy parameters
                 initStrategy(strategy, obj);
-                
+
                 // Add to strategy map in outer class
                 strategies.put(key, strategy);
             }
@@ -177,7 +177,7 @@ public class DefaultStrategyFactory implements StrategyFactory {
             if (params == null || params.isEmpty()) {
                 return;
             }
-            
+
             Map<String, Object> typedParams = getTypedParams(params);
             strategy.init(typedParams);
         }
