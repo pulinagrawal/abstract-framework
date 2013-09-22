@@ -56,11 +56,6 @@ public class FactoriesDataXmlLoader {
             logger.log(Level.WARNING, "Unable to init factories: properties file is null.");
         } else {
             factoryManager.init(properties);
-
-            for (Class<? extends Factory> clazz : factoryManager.listFactories()) {
-                logger.log(Level.INFO, "Successfully initialized factory data for {1}.",
-                        new Object[] { clazz });
-            }
         }
     }
 }
