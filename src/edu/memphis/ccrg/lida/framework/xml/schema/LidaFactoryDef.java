@@ -23,6 +23,8 @@ public class LidaFactoryDef {
     private final String factoryType;
     private final String factoryImpl;
 
+    private final boolean isDefault;
+    
     private final Set<String> dependencies;
 
     private final LidaFactoryConfig factoryConfig;
@@ -36,6 +38,8 @@ public class LidaFactoryDef {
 
         factoryType = factory.getFactoryType();
         factoryImpl = factory.getFactoryImpl();
+        
+        isDefault = factory.isDefault();
 
         dependencies = splitDepends(factory.getDepends());
 
@@ -62,6 +66,10 @@ public class LidaFactoryDef {
         return factoryConfig;
     }
 
+    public boolean isDefault() {
+        return isDefault;
+    } 
+    
     private static Set<String> splitDepends(String dependsAttr) {
         Set<String> resultSet = new HashSet<String>();
         if (dependsAttr == null) {

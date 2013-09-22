@@ -9,18 +9,19 @@
 
 	<xs:complexType name="factory">
 		<xs:all>
-			<xs:element name="factoryType" type="xs:string" />
-			<xs:element name="factoryImpl" type="xs:string" />
-			<xs:element name="factoryConfig" type="tns:factoryConfig" />
+			<xs:element name="factoryType" type="xs:string"/>
+			<xs:element name="factoryImpl" type="xs:string"/>
+			<xs:element name="factoryConfig" type="tns:factoryConfig"/>
 		</xs:all>
 		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="default" type="xs:boolean" />
 		<xs:attribute name="depends" type="xs:string" />
 	</xs:complexType>
 
 	<xs:complexType name="factoryConfig">
 		<xs:sequence>
-			<xs:element name="params" type="lida:params" minOccurs="0" />
-			<xs:element name="factoryObjects" minOccurs="0" maxOccurs="1">
+			<xs:element name="params" type="lida:params" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="factoryObjects">
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element name="factoryObject" type="tns:factoryObject"
@@ -36,8 +37,8 @@
 
 	<xs:complexType name="factoryObject">
 		<xs:all>
-			<xs:element name="type" type="xs:string" />
-			<xs:element name="impl" type="xs:string" />
+			<xs:element name="type" type="xs:string"/>
+			<xs:element name="impl" type="xs:string"/>
 			<xs:element name="params" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence>
