@@ -42,7 +42,6 @@ public interface CodeletManagerModule extends FrameworkModule {
 	 * 
 	 * @param type
 	 *            Codelet type
-	 * @see ElementFactory
 	 * @return new Codelet of specified type or null if type is not supported
 	 */
 	public Codelet getCodelet(String type);
@@ -71,8 +70,7 @@ public interface CodeletManagerModule extends FrameworkModule {
 	 * Sets default codelet type used by this Manager.
 	 * 
 	 * @param type
-	 *            type name of codelet in the {@link ElementFactory}
-	 * @see ElementFactory
+	 *            type name of codelet 
 	 */
 	public void setDefaultCodeletType(String type);
 
