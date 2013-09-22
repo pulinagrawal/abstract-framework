@@ -128,23 +128,23 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
         // Verify that the supplied FactoryDef matches the factory's class
         if (hasValidFactoryDef()) {
             logger.log(Level.INFO, "Factory definition verified for {0} initializer",
-                    new Object[] { factory.getName() });
+                    new Object[] { factoryDef.getFactoryName() });
         } else {
             logger.log(Level.WARNING,
                     "Invalid factory definition encountered for {0} initializer",
-                    new Object[] { factory.getName() });
+                    new Object[] { factoryDef.getFactoryName() });
         }
 
         // Verify that factory dependencies have been initialized
         if (hasInitializedDependencies()) {
             logger.log(Level.INFO,
                     "Factory dependencies have been initialized for {0} initializer",
-                    new Object[] { factory.getName() });
+                    new Object[] { factoryDef.getFactoryName() });
         } else {
             logger.log(
                     Level.WARNING,
                     "Factory dependencies have not been initialized in FactoryManager for {0} initializer",
-                    new Object[] { factory.getName() });
+                    new Object[] { factoryDef.getFactoryName() });
         }
     }
 
@@ -185,7 +185,7 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
             if (dependency == null || factoryManager.getFactory(dependency) == null) {
                 logger.log(Level.WARNING,
                         "Missing dependency {0} in factory definition for {1} initializer.",
-                        new Object[] { factoryName, factory.getName() });
+                        new Object[] { factoryName, factoryDef.getFactoryName() });
                 return false;
             }
         }
