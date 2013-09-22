@@ -18,7 +18,6 @@ import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryConfig;
 import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryDef;
 import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryObject;
 import edu.memphis.ccrg.lida.framework.xml.schema.LidaParam;
-import edu.memphis.ccrg.lida.framework.xml.schema.generated.lida.Param;
 
 /**
  * 
@@ -38,7 +37,7 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
      * Singleton instance of the FactoryManager -- used to retrieve factories
      * upon which this factory is depends
      */
-    private FactoryManager factoryManager = FactoryManager.getInstance();
+    private FactoryManager factoryManager = DefaultFactoryManager.getInstance();
 
     private GlobalInitializer globalInitializer = GlobalInitializer.getInstance();
 

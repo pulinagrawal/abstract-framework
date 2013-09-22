@@ -17,6 +17,7 @@ import edu.memphis.ccrg.lida.framework.CodeletManagerModule;
 import edu.memphis.ccrg.lida.framework.FrameworkModule;
 import edu.memphis.ccrg.lida.framework.FrameworkModuleImpl;
 import edu.memphis.ccrg.lida.framework.ModuleName;
+import edu.memphis.ccrg.lida.framework.factories.DefaultFactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.FactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.FrameworkTaskFactory;
 import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
@@ -39,7 +40,7 @@ public class AttentionCodeletModule extends FrameworkModuleImpl implements
 
 	private static final Logger logger = Logger
 			.getLogger(AttentionCodeletModule.class.getCanonicalName());
-	private static FactoryManager factoryManager = FactoryManager.getInstance();
+	private static FactoryManager factoryManager = DefaultFactoryManager.getInstance();
 	private static FrameworkTaskFactory taskFactory = factoryManager.getFactory(FrameworkTaskFactory.class);
 
 	private static final String DEFAULT_CODELET_TYPE = "";

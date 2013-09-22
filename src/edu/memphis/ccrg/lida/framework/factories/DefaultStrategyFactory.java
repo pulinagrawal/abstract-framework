@@ -22,7 +22,7 @@ import edu.memphis.ccrg.lida.framework.xml.schema.LidaParam;
 
 /**
  * A default implementation of the {@link StrategyFactory} interface. Instances
- * of this class will be accessible via the {@link FactoryManager}, and will be
+ * of this class will be accessible via the {@link DefaultFactoryManager}, and will be
  * configured using the Lida XML configuration files.
  * 
  * @author Sean Kugele

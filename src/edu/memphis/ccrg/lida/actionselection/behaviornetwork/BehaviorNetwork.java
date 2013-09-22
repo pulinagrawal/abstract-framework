@@ -26,6 +26,7 @@ import edu.memphis.ccrg.lida.actionselection.Behavior;
 import edu.memphis.ccrg.lida.actionselection.PreafferenceListener;
 import edu.memphis.ccrg.lida.framework.FrameworkModuleImpl;
 import edu.memphis.ccrg.lida.framework.ModuleListener;
+import edu.memphis.ccrg.lida.framework.factories.DefaultFactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.FactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.StrategyFactory;
 import edu.memphis.ccrg.lida.framework.initialization.Initializable;
@@ -59,6 +60,8 @@ public class BehaviorNetwork extends FrameworkModuleImpl implements
 	private static final String DEFAULT_CANDIDATE_THRESHOLD_DECAY = "default";
 	private static final String DEFAULT_BEHAVIOR_DECAY_NAME = "behaviorDecay";
 
+	private static final FactoryManager factoryManager = DefaultFactoryManager.getInstance();
+	
 	/*
 	 * Current threshold for a behavior to be a candidate for selection (or to
 	 * be 'active') (akin to THETA from Maes' Implementation)
@@ -194,7 +197,7 @@ public class BehaviorNetwork extends FrameworkModuleImpl implements
 				"actionselection.initialCandidateThreshold",
 				DEFAULT_INITIAL_CANDIDATE_THRESHOLD);
 		candidateThreshold = initialCandidateThreshold;
-		StrategyFactory factory = FactoryManager.getInstance().getFactory(StrategyFactory.class);
+		StrategyFactory factory = factoryManager.getFactory(StrategyFactory.class);
 		String name = getParam("actionselection.candidateThresholdDecayName",
 				DEFAULT_CANDIDATE_THRESHOLD_DECAY);
 		thresholdReductionStrategy = factory.getStrategy(name, DecayStrategy.class);

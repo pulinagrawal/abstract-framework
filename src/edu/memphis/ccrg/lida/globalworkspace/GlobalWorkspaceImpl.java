@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 
 import edu.memphis.ccrg.lida.framework.FrameworkModuleImpl;
 import edu.memphis.ccrg.lida.framework.ModuleListener;
+import edu.memphis.ccrg.lida.framework.factories.DefaultFactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.FactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.StrategyFactory;
 import edu.memphis.ccrg.lida.framework.initialization.Initializable;
@@ -45,7 +46,7 @@ public class GlobalWorkspaceImpl extends FrameworkModuleImpl implements
 
 	private static final Logger logger = Logger
 			.getLogger(GlobalWorkspaceImpl.class.getCanonicalName());
-	private static final FactoryManager factoryManager = FactoryManager.getInstance();
+	private static final FactoryManager factoryManager = DefaultFactoryManager.getInstance();
 	private static final StrategyFactory factory = factoryManager.getFactory(StrategyFactory.class);
 	private static final Integer DEFAULT_REFRACTORY_PERIOD = 40;
 	private static final String DEFAULT_COALITION_DECAY = "default";

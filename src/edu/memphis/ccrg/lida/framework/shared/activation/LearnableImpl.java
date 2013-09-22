@@ -13,6 +13,7 @@ package edu.memphis.ccrg.lida.framework.shared.activation;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import edu.memphis.ccrg.lida.framework.factories.DefaultFactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.FactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.StrategyFactory;
 import edu.memphis.ccrg.lida.framework.initialization.Initializable;
@@ -33,7 +34,7 @@ public class LearnableImpl extends ActivatibleImpl implements Learnable {
 	private static final Logger logger = Logger.getLogger(LearnableImpl.class
 			.getCanonicalName());
 	
-    private static final FactoryManager factoryManager = FactoryManager.getInstance();
+    private static final FactoryManager factoryManager = DefaultFactoryManager.getInstance();
     private static final StrategyFactory strategyFactory = factoryManager.getFactory(StrategyFactory.class);
 
 	private double baseLevelActivation;

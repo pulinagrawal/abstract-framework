@@ -16,8 +16,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import edu.memphis.ccrg.lida.actionselection.behaviornetwork.BehaviorNetwork;
 import edu.memphis.ccrg.lida.framework.FrameworkModuleImpl;
 import edu.memphis.ccrg.lida.framework.ModuleListener;
+import edu.memphis.ccrg.lida.framework.factories.DefaultFactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.FactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.StrategyFactory;
 import edu.memphis.ccrg.lida.framework.initialization.Initializable;
@@ -42,7 +44,7 @@ public class BasicActionSelection extends FrameworkModuleImpl implements
 	private static final Logger logger = Logger
 			.getLogger(BasicActionSelection.class.getCanonicalName());
 
-	private FactoryManager factoryManager = FactoryManager.getInstance();
+	private FactoryManager factoryManager = DefaultFactoryManager.getInstance();
 	private StrategyFactory strategyFactory = factoryManager.getFactory(StrategyFactory.class);
 	
 	private List<ActionSelectionListener> listeners = new ArrayList<ActionSelectionListener>();

@@ -7,27 +7,13 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.initialization;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import edu.memphis.ccrg.lida.framework.ModuleName;
-import edu.memphis.ccrg.lida.framework.factories.DefaultFrameworkTaskFactory;
-import edu.memphis.ccrg.lida.framework.factories.DefaultStrategyFactory;
-import edu.memphis.ccrg.lida.framework.factories.Factory;
+import edu.memphis.ccrg.lida.framework.factories.DefaultFactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.FactoryManager;
-import edu.memphis.ccrg.lida.framework.factories.FrameworkTaskFactory;
-import edu.memphis.ccrg.lida.framework.factories.StrategyFactory;
-import edu.memphis.ccrg.lida.framework.strategies.Strategy;
 import edu.memphis.ccrg.lida.framework.tasks.FrameworkTask;
-import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
 
 /**
  * Loads the factoriesData.xml file which configures the factories of the
@@ -43,7 +29,7 @@ public class FactoriesDataXmlLoader {
     private static final Logger logger = Logger.getLogger(FactoriesDataXmlLoader.class
             .getCanonicalName());
 
-    private static final FactoryManager factoryManager = FactoryManager.getInstance();
+    private static final FactoryManager factoryManager = DefaultFactoryManager.getInstance();
 
     /**
      * Loads factories with object types specified in {@link Properties}

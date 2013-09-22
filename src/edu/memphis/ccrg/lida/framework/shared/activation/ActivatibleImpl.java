@@ -10,12 +10,12 @@ package edu.memphis.ccrg.lida.framework.shared.activation;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import edu.memphis.ccrg.lida.framework.factories.DefaultFactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.FactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.StrategyFactory;
 import edu.memphis.ccrg.lida.framework.initialization.InitializableImpl;
 import edu.memphis.ccrg.lida.framework.strategies.DecayStrategy;
 import edu.memphis.ccrg.lida.framework.strategies.ExciteStrategy;
-import edu.memphis.ccrg.lida.framework.tasks.Codelet;
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
 
 /**
@@ -29,7 +29,7 @@ public class ActivatibleImpl extends InitializableImpl implements Activatible {
 	private static final Logger logger = Logger.getLogger(ActivatibleImpl.class
 			.getCanonicalName());
 	
-	private static final FactoryManager factoryManager = FactoryManager.getInstance();
+	private static final FactoryManager factoryManager = DefaultFactoryManager.getInstance();
 	private static final StrategyFactory strategyFactory = factoryManager.getFactory(StrategyFactory.class);
 
 	private ExciteStrategy exciteStrategy;

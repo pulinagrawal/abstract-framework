@@ -23,7 +23,7 @@ import edu.memphis.ccrg.lida.framework.AgentImpl;
 import edu.memphis.ccrg.lida.framework.FrameworkModule;
 import edu.memphis.ccrg.lida.framework.ModuleListener;
 import edu.memphis.ccrg.lida.framework.ModuleName;
-import edu.memphis.ccrg.lida.framework.factories.DefaultFrameworkTaskFactory;
+import edu.memphis.ccrg.lida.framework.factories.DefaultFactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.FactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.FrameworkTaskFactory;
 import edu.memphis.ccrg.lida.framework.tasks.FrameworkTask;
@@ -59,7 +59,7 @@ public class AgentXmlFactory implements AgentFactory {
 	private static final String DEFAULT_SCHEMA_FILE_PATH = "edu/memphis/ccrg/lida/framework/initialization/config/LidaXMLSchema.xsd";
 	private static final String AGENT_DATA_PROPERTY_NAME = "lida.agentdata";
 	
-	private static final FactoryManager factoryManager = FactoryManager.getInstance();
+	private static final FactoryManager factoryManager = DefaultFactoryManager.getInstance();
 
 	@Override
 	public Agent getAgent(Properties properties) {

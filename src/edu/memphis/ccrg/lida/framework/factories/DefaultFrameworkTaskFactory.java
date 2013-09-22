@@ -13,19 +13,17 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import edu.memphis.ccrg.lida.framework.FrameworkModule;
 import edu.memphis.ccrg.lida.framework.ModuleName;
-import edu.memphis.ccrg.lida.framework.initialization.FactoryDef;
-import edu.memphis.ccrg.lida.framework.initialization.FactoryDef.XmlConfig;
 import edu.memphis.ccrg.lida.framework.initialization.FrameworkTaskDef;
 import edu.memphis.ccrg.lida.framework.initialization.InitializableImpl;
-import edu.memphis.ccrg.lida.framework.initialization.StrategyDef;
 import edu.memphis.ccrg.lida.framework.initialization.XmlUtils;
 import edu.memphis.ccrg.lida.framework.tasks.FrameworkTask;
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
+import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryDef;
+import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryObject;
 
 /**
  * A default implementation of {@link FrameworkTaskFactory} interface.
@@ -33,17 +31,12 @@ import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
  * @author Sean Kugele
  * 
  */
+// TODO: This factory needs to be overhauled to use the same style
+// interface as the Strategy factory; i.e., lookup by type + interface class.
 public class DefaultFrameworkTaskFactory extends InitializableImpl implements
-        FrameworkTaskFactory, InitializableFactory {
+        FrameworkTaskFactory {
     private static final Logger logger = Logger.getLogger(DefaultFrameworkTaskFactory.class
             .getCanonicalName());
-
-    private static final String FACTORY_NAME = "FrameworkTaskFactory";
-
-    /*
-     * Sole instance of this class that will be used.
-     */
-    private static DefaultFrameworkTaskFactory instance = new DefaultFrameworkTaskFactory();
 
     /*
      * Map of between FrameworkTask types and the FrameworkTaskDef objects that
@@ -51,21 +44,9 @@ public class DefaultFrameworkTaskFactory extends InitializableImpl implements
      */
     private Map<String, FrameworkTaskDef> tasks = new HashMap<String, FrameworkTaskDef>();
 
-    /*
-     * Private constructor to prevent instantiation
-     */
-    private DefaultFrameworkTaskFactory() {
-    }
-
-    /**
-     * Returns the sole instance of this factory. Implements the Singleton
-     * pattern.
-     * 
-     * @return the sole {@link DefaultFrameworkTaskFactory} instance of this
-     *         class
-     */
-    public static DefaultFrameworkTaskFactory getInstance() {
-        return instance;
+    // Package private. Should be instantiated in the FactoryManager
+    DefaultFrameworkTaskFactory() {
+        
     }
 
     @Override
@@ -79,6 +60,7 @@ public class DefaultFrameworkTaskFactory extends InitializableImpl implements
     }
 
     @Override
+    // TODO: Can this stuff be configured in the XML file, or does it need to be dynamic?
     public FrameworkTask getFrameworkTask(String taskType,
             Map<String, ? extends Object> params, Map<ModuleName, FrameworkModule> modules) {
         FrameworkTask task = null;
@@ -135,22 +117,12 @@ public class DefaultFrameworkTaskFactory extends InitializableImpl implements
     }
 
     @Override
-    public void addFrameworkTaskType(FrameworkTaskDef taskDef) {
-        tasks.put(taskDef.getName(), taskDef);
-    }
-
-    @Override
     public boolean containsTaskType(String typeName) {
         return tasks.containsKey(typeName);
     }
 
     @Override
-    public String getName() {
-        return FACTORY_NAME;
-    }
-
-    @Override
-    public void init(FactoryDef factoryDef) {
+    public void init(LidaFactoryDef factoryDef) {
         FactoryInitializer<FrameworkTaskFactory> initializer = new Initializer(factoryDef);
         initializer.init();
     }
@@ -160,93 +132,72 @@ public class DefaultFrameworkTaskFactory extends InitializableImpl implements
      */
     private class Initializer extends AbstractFactoryInitializer<FrameworkTaskFactory> {
 
-        public Initializer(FactoryDef factoryDef) {
+        public Initializer(LidaFactoryDef factoryDef) {
             super(DefaultFrameworkTaskFactory.this, factoryDef);
         }
 
         @Override
         public void loadData() {
-            Element factoryConfig = getFactoryConfig();
             
-            Map<String, FrameworkTaskDef> tasks = getTasks(factoryConfig);
-            fillTasks(tasks);
         }
 
-        private Element getFactoryConfig() {
-            XmlConfig config = factoryDef.getConfig();
-            Document doc = XmlUtils.parseXmlFile(config.getFilename(), config.getSchema());
-            Element docEle = doc.getDocumentElement();
-
-            List<org.w3c.dom.Element> list = XmlUtils.getChildrenInGroup(docEle,
-                    "factoriesConfig", "factoryConfig");
-            if (list != null && !list.isEmpty()) {
-                for (Element e : list) {
-                    String name = e.getAttribute("name");
-                    if (factory.getName().equals(name)) {
-                        return e;
-                    }
-                }
-            }
-            return null;
-        }
-
-        private void fillTasks(Map<String, FrameworkTaskDef> tasks) {
-            for (FrameworkTaskDef cd : tasks.values()) {
-                factory.addFrameworkTaskType(cd);
-            }
-        }
-
-        private Map<String, FrameworkTaskDef> getTasks(Element element) {
-            Map<String, FrameworkTaskDef> tasks = new HashMap<String, FrameworkTaskDef>();
-            List<Element> list = XmlUtils.getChildrenInGroup(element, "tasks", "task");
-            if (list != null && !list.isEmpty()) {
-                for (Element e : list) {
-                    FrameworkTaskDef taskDef = getTaskDef(e);
-                    if (taskDef != null) {
-                        tasks.put(taskDef.getName(), taskDef);
-                    }
-                }
-            }
-            return tasks;
-        }
-
-        private FrameworkTaskDef getTaskDef(Element e) {
-            FrameworkTaskDef taskDef = null;
-            String className = XmlUtils.getTextValue(e, "class");
-            String name = e.getAttribute("name");
-            int ticksPerRun = XmlUtils.getIntegerValue(e, "ticksperrun");
-            Map<String, Object> params = XmlUtils.getTypedParams(e);
-
-            Map<ModuleName, String> associatedModules = getAssociatedModules(e);
-            taskDef = new FrameworkTaskDef();
-            taskDef.setClassName(className.trim());
-            taskDef.setName(name.trim());
-            taskDef.setParams(params);
-            taskDef.setTicksPerRun(ticksPerRun);
-            taskDef.setAssociatedModules(associatedModules);
-            return taskDef;
-        }
-
-        private Map<ModuleName, String> getAssociatedModules(Element element) {
-            Map<ModuleName, String> associatedModules = new HashMap<ModuleName, String>();
-            List<Element> nl = XmlUtils.getChildren(element, "associatedmodule");
-            String elementName = element.getAttribute("name");
-            if (nl != null && ! nl.isEmpty()) {
-                for (Element assocModuleElement : nl) {
-                    String assocMod = XmlUtils.getValue(assocModuleElement);
-                    String function = assocModuleElement.getAttribute("function").trim();
-                    ModuleName name = ModuleName.getModuleName(assocMod);
-                    if (name == null) {
-                        name = ModuleName.addModuleName(assocMod);
-                        logger.log(
-                                Level.INFO,
-                                "{1} is not a pre-defined ModuleName so a new ModuleName was created for element: {2}",
-                                new Object[] { 0L, assocMod, elementName });
-                    }
-                    associatedModules.put(name, function);
-                }
-            }
-            return associatedModules;
-        }
+//        private void fillTasks(Map<String, LidaFactoryObject> tasks) {
+//            for (FrameworkTaskDef cd : tasks.values()) {
+//                factory.addFrameworkTaskType(cd);
+//            }
+//        }
+//
+//        private Map<String, FrameworkTaskDef> getTasks(Element element) {
+//            Map<String, FrameworkTaskDef> tasks = new HashMap<String, FrameworkTaskDef>();
+//            List<Element> list = XmlUtils.getChildrenInGroup(element, "tasks", "task");
+//            if (list != null && !list.isEmpty()) {
+//                for (Element e : list) {
+//                    FrameworkTaskDef taskDef = getTaskDef(e);
+//                    if (taskDef != null) {
+//                        tasks.put(taskDef.getName(), taskDef);
+//                    }
+//                }
+//            }
+//            return tasks;
+//        }
+//
+//        private FrameworkTaskDef getTaskDef(Element e) {
+//            FrameworkTaskDef taskDef = null;
+//            String className = XmlUtils.getTextValue(e, "class");
+//            String name = e.getAttribute("name");
+//            int ticksPerRun = XmlUtils.getIntegerValue(e, "ticksperrun");
+//            Map<String, Object> params = XmlUtils.getTypedParams(e);
+//
+//            Map<ModuleName, String> associatedModules = getAssociatedModules(e);
+//            taskDef = new FrameworkTaskDef();
+//            taskDef.setClassName(className.trim());
+//            taskDef.setName(name.trim());
+//            taskDef.setParams(params);
+//            taskDef.setTicksPerRun(ticksPerRun);
+//            taskDef.setAssociatedModules(associatedModules);
+//            return taskDef;
+//        }
+//
+//        private Map<ModuleName, String> getAssociatedModules(Element element) {
+//            Map<ModuleName, String> associatedModules = new HashMap<ModuleName, String>();
+//            List<Element> nl = XmlUtils.getChildren(element, "associatedmodule");
+//            String elementName = element.getAttribute("name");
+//            if (nl != null && ! nl.isEmpty()) {
+//                for (Element assocModuleElement : nl) {
+//                    String assocMod = XmlUtils.getValue(assocModuleElement);
+//                    String function = assocModuleElement.getAttribute("function").trim();
+//                    ModuleName name = ModuleName.getModuleName(assocMod);
+//                    if (name == null) {
+//                        name = ModuleName.addModuleName(assocMod);
+//                        logger.log(
+//                                Level.INFO,
+//                                "{1} is not a pre-defined ModuleName so a new ModuleName was created for element: {2}",
+//                                new Object[] { 0L, assocMod, elementName });
+//                    }
+//                    associatedModules.put(name, function);
+//                }
+//            }
+//            return associatedModules;
+//        }
     }
 }
