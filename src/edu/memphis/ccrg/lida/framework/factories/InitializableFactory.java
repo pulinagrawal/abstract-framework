@@ -19,19 +19,13 @@ import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryDef;
 public interface InitializableFactory extends Factory {
     
     /**
-     * Returns the name of this factory.
-     * 
-     * @return a {@code String}
-     */
-    public String getName();
-    
-    /**
      * Initializes this factory based on the details specified in the supplied
      * {@link LidaFactoryDef}.
      * 
      * @param factoryDef
      *            a {@link LidaFactoryDef} containing initialization details
+     * @throws IllegalArgumentException
+     *             if malformed factory configuration is supplied
      */
-    public void init(LidaFactoryDef factoryDef);
+    public void init(LidaFactoryDef factoryDef) throws IllegalArgumentException;
 }
-
