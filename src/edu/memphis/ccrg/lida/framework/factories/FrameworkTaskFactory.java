@@ -66,14 +66,6 @@ public interface FrameworkTaskFactory extends InitializableFactory {
             Map<String, ? extends Object> params, Map<ModuleName, FrameworkModule> modules);
 
     /**
-     * Adds the {@link FrameworkTask} type.
-     * 
-     * @param taskDef
-     *            {@link FrameworkTaskDef}
-     */
-    public void addFrameworkTaskType(FrameworkTaskDef taskDef);
-
-    /**
      * Returns whether this factory contains specified {@link FrameworkTask}
      * type.
      * 
