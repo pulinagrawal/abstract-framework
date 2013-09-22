@@ -31,8 +31,6 @@ public class DefaultStrategyFactory implements StrategyFactory {
     private static final Logger logger = Logger.getLogger(DefaultStrategyFactory.class
             .getCanonicalName());
 
-    private static final String FACTORY_NAME = "StrategyFactory";
-
     /*
      * Map of all the strategies (of any type) available to this factory
      */
@@ -40,7 +38,7 @@ public class DefaultStrategyFactory implements StrategyFactory {
 
     // Package private. Should be instantiated in the FactoryManager
     DefaultStrategyFactory() {
-        
+
     }
 
     @SuppressWarnings("unchecked")
@@ -62,11 +60,6 @@ public class DefaultStrategyFactory implements StrategyFactory {
     public <T extends Strategy> boolean containsStrategy(String name, Class<T> type) {
         FactoryKey key = new FactoryKey(name, type);
         return strategies.containsKey(key);
-    }
-
-    @Override
-    public String getName() {
-        return FACTORY_NAME;
     }
 
     @Override
@@ -116,6 +109,13 @@ public class DefaultStrategyFactory implements StrategyFactory {
 
             for (LidaFactoryObject obj : objects) {
                 FactoryKey key = createFactoryObjectKey(obj);
+                if (strategies.containsKey(key)) {
+                    logger.log(
+                            Level.WARNING,
+                            "Encountered multiple strategies with name {1} and type {2}.  Only first will be retained.",
+                            new Object[] { TaskManager.getCurrentTick(), key.getAlias(), key.getType().getCanonicalName() });
+                }
+
                 Strategy strategy = createStrategy(obj);
 
                 // Initialize strategy parameters
