@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://ccrg.cs.memphis.edu/assets/papers/2010/LIDA-framework-non-commercial-v1.0.pdf
  *******************************************************************************/
-package edu.memphis.ccrg.lida.framework.xml.schema.helper;
+package edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.helper;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 

@@ -19,9 +19,9 @@ import java.util.logging.Logger;
 
 import edu.memphis.ccrg.lida.framework.initialization.GlobalInitializer;
 import edu.memphis.ccrg.lida.framework.initialization.XmlUtils;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoriesXmlDoc;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryDef;
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
-import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoriesXmlDoc;
-import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryDef;
 
 /**
  * A default implementation of the {@link FactoryManager} interface. 

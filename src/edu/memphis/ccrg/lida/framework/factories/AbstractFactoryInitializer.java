@@ -14,10 +14,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import edu.memphis.ccrg.lida.framework.initialization.GlobalInitializer;
-import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryConfig;
-import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryDef;
-import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryObject;
-import edu.memphis.ccrg.lida.framework.xml.schema.LidaParam;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryConfig;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryDef;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryObject;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaParam;
 
 /**
  * 

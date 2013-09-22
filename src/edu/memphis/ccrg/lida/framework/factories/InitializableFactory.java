@@ -7,7 +7,7 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.factories;
 
-import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryDef;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryDef;
 
 /**
  * An interface for an initializable {@link Factory}. All factories that are

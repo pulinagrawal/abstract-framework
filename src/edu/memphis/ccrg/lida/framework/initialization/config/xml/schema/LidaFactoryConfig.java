@@ -5,15 +5,15 @@
  * which accompanies this distribution, and is available at
  * http://ccrg.cs.memphis.edu/assets/papers/2010/LIDA-framework-non-commercial-v1.0.pdf
  *******************************************************************************/
-package edu.memphis.ccrg.lida.framework.xml.schema;
+package edu.memphis.ccrg.lida.framework.initialization.config.xml.schema;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.memphis.ccrg.lida.framework.xml.schema.generated.lida.Param;
-import edu.memphis.ccrg.lida.framework.xml.schema.generated.lidafactories.FactoryConfig;
-import edu.memphis.ccrg.lida.framework.xml.schema.generated.lidafactories.FactoryConfigType;
-import edu.memphis.ccrg.lida.framework.xml.schema.generated.lidafactories.FactoryObject;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lida.Param;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactories.FactoryConfig;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactories.FactoryConfigType;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactories.FactoryObject;
 
 /**
  * @author Sean Kugele

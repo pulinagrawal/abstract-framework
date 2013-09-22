@@ -6,7 +6,7 @@
 //
 
 
-package edu.memphis.ccrg.lida.framework.xml.schema.generated.lida;
+package edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lida;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;

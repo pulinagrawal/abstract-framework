@@ -6,7 +6,7 @@
 //
 
 
-package edu.memphis.ccrg.lida.framework.xml.schema.generated.lidafactories;
+package edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactories;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-import edu.memphis.ccrg.lida.framework.xml.schema.generated.lida.Param;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lida.Param;
 
 /**
  * <p>Java class for factoryConfig complex type.

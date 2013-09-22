@@ -20,10 +20,10 @@ import edu.memphis.ccrg.lida.framework.ModuleName;
 import edu.memphis.ccrg.lida.framework.initialization.FrameworkTaskDef;
 import edu.memphis.ccrg.lida.framework.initialization.InitializableImpl;
 import edu.memphis.ccrg.lida.framework.initialization.XmlUtils;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryDef;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryObject;
 import edu.memphis.ccrg.lida.framework.tasks.FrameworkTask;
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
-import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryDef;
-import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryObject;
 
 /**
  * A default implementation of {@link FrameworkTaskFactory} interface.
