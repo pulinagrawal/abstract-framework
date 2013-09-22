@@ -11,14 +11,12 @@ import java.util.Map;
 
 import edu.memphis.ccrg.lida.framework.shared.CognitiveContent;
 import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
-import edu.memphis.ccrg.lida.framework.strategies.Strategy;
-import edu.memphis.ccrg.lida.framework.tasks.FrameworkTask;
 
 /**
  * @author Sean Kugele
  * 
  */
-public interface ElementFactory extends Factory {
+public interface CognitiveContentFactory extends Factory {
 
     /**
      * @param type
@@ -49,4 +47,3 @@ public interface ElementFactory extends Factory {
             Map<String, ?> params);
 
 }
-
