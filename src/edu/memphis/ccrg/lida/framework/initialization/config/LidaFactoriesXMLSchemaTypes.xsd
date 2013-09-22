@@ -38,7 +38,7 @@
 		<xs:all>
 			<xs:element name="type" type="xs:string" />
 			<xs:element name="impl" type="xs:string" />
-			<xs:element name="params">
+			<xs:element name="params" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element name="param" type="lida:param" nillable="true"
@@ -48,6 +48,7 @@
 			</xs:element>
 		</xs:all>
 		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="default" type="xs:boolean" />
 	</xs:complexType>
 
 	<xs:simpleType name="factoryConfigType">

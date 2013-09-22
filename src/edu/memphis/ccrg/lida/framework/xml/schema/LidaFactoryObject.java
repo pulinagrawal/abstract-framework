@@ -21,6 +21,7 @@ import edu.memphis.ccrg.lida.framework.xml.schema.generated.lidafactories.Factor
 public class LidaFactoryObject {
 
     private final String name;
+    private final boolean isDefault;
 
     private final String objectType;
     private final String objectImpl;
@@ -29,6 +30,7 @@ public class LidaFactoryObject {
 
     public LidaFactoryObject(FactoryObject factoryObject) {
         name = factoryObject.getName();
+        isDefault = factoryObject.isDefault();
 
         objectType = factoryObject.getType();
         objectImpl = factoryObject.getImpl();
@@ -50,6 +52,10 @@ public class LidaFactoryObject {
 
     public List<LidaParam> getObjectParams() {
         return objectParams;
+    }
+    
+    public boolean isDefault() {
+        return isDefault;
     }
 
     private static List<LidaParam> transformParams(List<Param> params) {
