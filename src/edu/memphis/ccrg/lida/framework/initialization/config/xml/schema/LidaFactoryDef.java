@@ -7,8 +7,11 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.initialization.config.xml.schema;
 
+import java.io.FileNotFoundException;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.xml.bind.JAXBException;
 
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactories.Factory;
 
@@ -24,7 +27,7 @@ public class LidaFactoryDef {
     private final String factoryImpl;
 
     private final boolean isDefault;
-    
+
     private final Set<String> dependencies;
 
     private final LidaFactoryConfig factoryConfig;
@@ -33,12 +36,12 @@ public class LidaFactoryDef {
     // attribute
     private static final String DEPENDS_SEPARATOR = ",";
 
-    public LidaFactoryDef(Factory factory) {
+    public LidaFactoryDef(Factory factory) throws FileNotFoundException, JAXBException {
         factoryName = factory.getName();
 
         factoryType = factory.getFactoryType();
         factoryImpl = factory.getFactoryImpl();
-        
+
         isDefault = factory.isDefault();
 
         dependencies = splitDepends(factory.getDepends());
@@ -68,8 +71,8 @@ public class LidaFactoryDef {
 
     public boolean isDefault() {
         return isDefault;
-    } 
-    
+    }
+
     private static Set<String> splitDepends(String dependsAttr) {
         Set<String> resultSet = new HashSet<String>();
         if (dependsAttr == null) {

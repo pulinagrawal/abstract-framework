@@ -7,8 +7,12 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.initialization.config.xml.schema;
 
+import java.io.FileNotFoundException;
+
+import javax.xml.bind.JAXBException;
+
 import edu.memphis.ccrg.lida.framework.initialization.XmlUtils;
-import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactories.LidaFactoryConfigFile;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactoryconfig.LidaFactoryConfigFile;
 
 /**
  * @author Sean Kugele
@@ -18,7 +22,8 @@ public class LidaFactoryConfigFileXmlDoc {
 
     private final LidaFactoryConfig factoryConfig;
 
-    public LidaFactoryConfigFileXmlDoc(String xmlFilename) {
+    public LidaFactoryConfigFileXmlDoc(String xmlFilename) throws FileNotFoundException,
+            JAXBException {
         LidaFactoryConfigFile docAsObj = XmlUtils.unmarshalXmlToObject(xmlFilename,
                 LidaFactoryConfigFile.class);
 

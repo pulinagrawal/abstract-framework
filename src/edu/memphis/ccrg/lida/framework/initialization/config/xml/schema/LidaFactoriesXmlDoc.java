@@ -7,8 +7,11 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.initialization.config.xml.schema;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.bind.JAXBException;
 
 import edu.memphis.ccrg.lida.framework.initialization.XmlUtils;
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactories.Factory;
@@ -22,7 +25,7 @@ public class LidaFactoriesXmlDoc {
 
     private final List<LidaFactoryDef> factories;
 
-    public LidaFactoriesXmlDoc(String xmlFilename) {
+    public LidaFactoriesXmlDoc(String xmlFilename) throws FileNotFoundException, JAXBException {
         LidaFactories docAsObj = XmlUtils
                 .unmarshalXmlToObject(xmlFilename, LidaFactories.class);
 
@@ -59,7 +62,8 @@ public class LidaFactoriesXmlDoc {
     // Convert factories from instances of the Jaxb generated
     // Factory classes to instances of the LidaFactoryDef wrapper
     // classes
-    private static List<LidaFactoryDef> transformFactories(List<Factory> factories) {
+    private static List<LidaFactoryDef> transformFactories(List<Factory> factories)
+            throws FileNotFoundException, JAXBException {
         List<LidaFactoryDef> resultList = new ArrayList<LidaFactoryDef>();
 
         for (Factory f : factories) {

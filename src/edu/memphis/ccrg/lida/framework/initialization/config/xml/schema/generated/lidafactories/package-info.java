@@ -1,0 +1,2 @@
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://ccrg.cs.memphis.edu/LidaFactoriesXMLSchema", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactories;

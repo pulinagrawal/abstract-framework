@@ -163,6 +163,9 @@ public class FactoryObject {
      *     
      */
     public Boolean isDefault() {
+        if (_default == null) {
+            return Boolean.FALSE;
+        }
         return _default;
     }
 

@@ -7,8 +7,11 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.initialization.config.xml.schema;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.bind.JAXBException;
 
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lida.Param;
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactories.FactoryConfig;
@@ -24,7 +27,7 @@ public class LidaFactoryConfig {
     private final List<LidaParam> factoryParams;
     private final List<LidaFactoryObject> factoryObjects;
 
-    public LidaFactoryConfig(FactoryConfig factoryConfig) {
+    public LidaFactoryConfig(FactoryConfig factoryConfig) throws FileNotFoundException, JAXBException {
         FactoryConfigType factoryConfigType = factoryConfig.getType();
 
         if (FactoryConfigType.EXTERNAL == factoryConfigType) {
@@ -50,7 +53,7 @@ public class LidaFactoryConfig {
 
     // Populates the factory configuration from the details in the external
     // file referenced in this factory config
-    private LidaFactoryConfig processExternalFile(String xmlConfigFile) {
+    private LidaFactoryConfig processExternalFile(String xmlConfigFile) throws FileNotFoundException, JAXBException {
         LidaFactoryConfigFileXmlDoc doc = new LidaFactoryConfigFileXmlDoc(xmlConfigFile);
         return doc.getFactoryConfig();
     }
