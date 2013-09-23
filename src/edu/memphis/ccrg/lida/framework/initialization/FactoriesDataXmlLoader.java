@@ -7,6 +7,7 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.initialization;
 
+import java.io.FileNotFoundException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,8 +42,11 @@ public class FactoriesDataXmlLoader {
         if (properties == null) {
             logger.log(Level.WARNING, "Unable to init factories: properties file is null.");
         } else {
-            factoryManager.init(properties);
+            try {
+                factoryManager.init(properties);
+            } catch (IllegalArgumentException e) {
+                logger.log(Level.WARNING, "Unable to init factories: " + e);
+            }
         }
     }
 }
-
