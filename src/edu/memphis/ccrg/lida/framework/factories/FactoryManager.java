@@ -7,6 +7,7 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.factories;
 
+import java.io.FileNotFoundException;
 import java.util.Properties;
 
 /**
@@ -51,6 +52,9 @@ public interface FactoryManager {
      * 
      * @param p
      *            a properties file containing factory configuration information
+     * @throws IllegalArgumentException
+     *             if the supplied properties file is null or contains invalid
+     *             configuration information
      */
-    public void init(Properties p);
+    public void init(Properties p) throws IllegalArgumentException;
 }
