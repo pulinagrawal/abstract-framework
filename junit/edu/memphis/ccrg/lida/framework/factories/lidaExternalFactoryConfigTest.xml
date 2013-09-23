@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<lidaFactoryConfigFile
+	xmlns="http://ccrg.cs.memphis.edu/LidaFactoryConfigFileXMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<factoryConfig type="local">
+		<factoryObjects>
+			<factoryObject name="defaultExciteStrategy" default="true">
+				<type>edu.memphis.ccrg.lida.framework.strategies.ExciteStrategy
+					</type>
+				<impl>edu.memphis.ccrg.lida.framework.strategies.LinearExciteStrategy
+					</impl>
+				<params>
+					<param name="m" type="double">1.0</param>
+					<param name="flyweight" type="boolean">true</param>
+				</params>
+			</factoryObject>
+			<factoryObject name="defaultDecayStrategy" default="true">
+				<type>edu.memphis.ccrg.lida.framework.strategies.DecayStrategy
+					</type>
+				<impl>edu.memphis.ccrg.lida.framework.strategies.LinearDecayStrategy
+					</impl>
+				<params>
+					<param name="m" type="double">0.1</param>
+					<param name="flyweight" type="boolean">true</param>
+				</params>
+			</factoryObject>
+			<factoryObject name="slowExciteStrategy">
+				<type>edu.memphis.ccrg.lida.framework.strategies.ExciteStrategy
+					</type>
+				<impl>edu.memphis.ccrg.lida.framework.strategies.LinearExciteStrategy
+					</impl>
+				<params>
+					<param name="m" type="double">0.000000001</param>
+					<param name="flyweight" type="boolean">true</param>
+				</params>
+			</factoryObject>
+			<factoryObject name="slowDecayStrategy">
+				<type>edu.memphis.ccrg.lida.framework.strategies.DecayStrategy
+					</type>
+				<impl>edu.memphis.ccrg.lida.framework.strategies.LinearDecayStrategy
+					</impl>
+				<params>
+					<param name="m" type="double">0.000000001</param>
+					<param name="flyweight" type="boolean">true</param>
+				</params>
+			</factoryObject>
+			<factoryObject name="pamDefaultExciteStrategy">
+				<type>edu.memphis.ccrg.lida.framework.strategies.ExciteStrategy
+					</type>
+				<impl>edu.memphis.ccrg.lida.framework.strategies.LinearExciteStrategy
+					</impl>
+				<params>
+					<param name="m" type="double">1.0</param>
+					<param name="flyweight" type="boolean">true</param>
+				</params>
+			</factoryObject>
+			<factoryObject name="pamDefaultDecayStrategy">
+				<type>edu.memphis.ccrg.lida.framework.strategies.DecayStrategy
+					</type>
+				<impl>edu.memphis.ccrg.lida.framework.strategies.LinearDecayStrategy
+					</impl>
+				<params>
+					<param name="m" type="double">0.05</param>
+					<param name="flyweight" type="boolean">true</param>
+				</params>
+			</factoryObject>
+			<factoryObject name="noExciteStrategy">
+				<type>edu.memphis.ccrg.lida.framework.strategies.ExciteStrategy
+					</type>
+				<impl>edu.memphis.ccrg.lida.framework.strategies.NoExciteStrategy
+					</impl>
+				<params>
+					<param name="m" type="double">0.0</param>
+					<param name="flyweight" type="boolean">true</param>
+				</params>
+			</factoryObject>
+			<factoryObject name="noDecayStrategy">
+				<type>edu.memphis.ccrg.lida.framework.strategies.DecayStrategy
+					</type>
+				<impl>edu.memphis.ccrg.lida.framework.strategies.NoDecayStrategy
+					</impl>
+				<params>
+					<param name="m" type="double">0.0</param>
+					<param name="flyweight" type="boolean">true</param>
+				</params>
+			</factoryObject>
+		</factoryObjects>
+	</factoryConfig>
+</lidaFactoryConfigFile>

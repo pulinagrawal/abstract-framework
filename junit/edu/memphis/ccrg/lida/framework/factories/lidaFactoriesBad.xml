@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<lidaFactories xmlns="http://ccrg.cs.memphis.edu/LidaFactoriesXMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- Type/Impl mismatch -->
+	<factory name="illegalFactory1" depends="">
+		<factoryType>edu.memphis.ccrg.lida.framework.factories.CognitiveContentFactory
+		</factoryType>
+		<factoryImpl>edu.memphis.ccrg.lida.framework.factories.DefaultStrategyFactory
+		</factoryImpl>
+		<factoryConfig type="external"
+			filename="junit/edu/memphis/ccrg/lida/framework/factories/lidaExternalFactoryConfigTest.xml" />
+	</factory>
+
+	<!-- Non-existent type -->
+	<factory name="illegalFactory2" depends="">
+		<factoryType>edu.memphis.ccrg.lida.framework.factories.XYZ
+		</factoryType>
+		<factoryImpl>edu.memphis.ccrg.lida.framework.factories.DefaultStrategyFactory
+		</factoryImpl>
+		<factoryConfig type="external"
+			filename="junit/edu/memphis/ccrg/lida/framework/factories/lidaExternalFactoryConfigTest.xml" />
+	</factory>
+
+	<!-- Non-existent implementation -->
+	<factory name="illegalFactory3" depends="">
+		<factoryType>edu.memphis.ccrg.lida.framework.factories.StrategyFactory
+		</factoryType>
+		<factoryImpl>edu.memphis.ccrg.lida.framework.factories.XYZ
+		</factoryImpl>
+		<factoryConfig type="external"
+			filename="junit/edu/memphis/ccrg/lida/framework/factories/lidaExternalFactoryConfigTest.xml" />
+	</factory>
+	
+	<!--  Add a factory with dependencies -->
+	
+	<!--  Add a factory with circular dependencies -->
+	
+</lidaFactories>

@@ -19,11 +19,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoriesXmlDoc;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryDef;
 import edu.memphis.ccrg.lida.framework.strategies.DecayStrategy;
 import edu.memphis.ccrg.lida.framework.strategies.ExciteStrategy;
 import edu.memphis.ccrg.lida.framework.strategies.Strategy;
-import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoriesXmlDoc;
-import edu.memphis.ccrg.lida.framework.xml.schema.LidaFactoryDef;
 
 /**
  * @author Sean Kugele
@@ -109,16 +109,6 @@ public class DefaultStrategyFactoryTest {
         assertTrue(factory.containsStrategy("noDecay", DecayStrategy.class));
     }
 
-    /**
-     * Test method for
-     * {@link edu.memphis.ccrg.lida.framework.factories.DefaultStrategyFactory#getName()}
-     * .
-     */
-    @Test
-    public final void testGetName() {
-        assertEquals("StrategyFactory", factory.getName());
-    }
-   
     /**
      * Test to validate that parameters were set properly.
      */
