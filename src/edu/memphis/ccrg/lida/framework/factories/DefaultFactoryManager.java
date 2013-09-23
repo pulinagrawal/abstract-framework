@@ -7,6 +7,7 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.factories;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.bind.JAXBException;
+
 import edu.memphis.ccrg.lida.framework.initialization.GlobalInitializer;
 import edu.memphis.ccrg.lida.framework.initialization.XmlUtils;
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoriesXmlDoc;
@@ -24,7 +27,7 @@ import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFact
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
 
 /**
- * A default implementation of the {@link FactoryManager} interface. 
+ * A default implementation of the {@link FactoryManager} interface.
  * 
  * TODO: Add details about the XML configuration file expectations and usage.
  * 
@@ -42,17 +45,15 @@ public class DefaultFactoryManager implements FactoryManager {
     private static DefaultFactoryManager instance = new DefaultFactoryManager();
 
     /*
-     * Map of Factory interfaces to registered implementations of those
-     * interfaces
+     * Map of factory names to registered implementations of those interfaces
      */
-    private Map<FactoryKey, InitializableFactory> factories = new HashMap<FactoryKey, InitializableFactory>();
+    private Map<String, Factory> factories = new HashMap<String, Factory>();
 
     /*
      * Factories that were registered as defaults. This map is used when a
-     * "factory name" is not provided to getFactory. A FactoryKey is returned so
-     * that it can then be used to interrogate the factories map
+     * "factory name" is not provided to getFactory.
      */
-    private Map<Class<? extends InitializableFactory>, FactoryKey> defaultFactories = new HashMap<Class<? extends InitializableFactory>, FactoryKey>();
+    private Map<Class<? extends Factory>, String> defaultFactories = new HashMap<Class<? extends Factory>, String>();
 
     /*
      * Private constructor to prevent instantiation
@@ -89,23 +90,23 @@ public class DefaultFactoryManager implements FactoryManager {
             return null;
         }
 
-        FactoryKey key = defaultFactories.get(type);
+        String name = defaultFactories.get(type);
 
-        if (key == null) {
+        if (name == null) {
             logger.log(Level.WARNING,
                     "FactoryManager does not contain a default factory for type {1}",
-                    new Object[] { TaskManager.getCurrentTick(), type });
+                    new Object[] { TaskManager.getCurrentTick(), type.getCanonicalName() });
 
             return null;
         }
 
-        return getFactory(key.getAlias(), type);
+        return getFactory(name, type);
     }
 
     /**
      * Returns a {@link Factory} implementation matching the specified factory
      * name and interface. The factory name should correspond to a "name"
-     * attribute inthe XML configuration file used to initialize the
+     * attribute in the XML configuration file used to initialize the
      * {@code FactoryManager}. If no match is found for the specified criteria
      * then {@code null} will be returned.
      * 
@@ -122,10 +123,8 @@ public class DefaultFactoryManager implements FactoryManager {
             return null;
         }
 
-        FactoryKey key = new FactoryKey(name, type);
-
         @SuppressWarnings("unchecked")
-        T factory = (T) factories.get(key);
+        T factory = (T) factories.get(name);
 
         if (factory == null) {
             logger.log(Level.WARNING,
@@ -138,14 +137,20 @@ public class DefaultFactoryManager implements FactoryManager {
 
     /**
      * Initializes the FactoryManager and its factories based on the contents of
-     * the supplied properties file.
+     * the supplied properties file. The properties file is expected to have a
+     * property that specifies the location on the LidaFactories XML
+     * configuration file.
      * 
-     * @param p
+     * @param props
      *            a properties file containing factory config information
      */
     @Override
-    public void init(Properties p) {
-        FactoryManagerInitializer initializer = new FactoryManagerInitializer(p);
+    public void init(Properties props) throws IllegalArgumentException {
+        if (props == null) {
+            throw new IllegalArgumentException("Properties file must not be null");
+        }
+
+        FactoryManagerInitializer initializer = new FactoryManagerInitializer(props);
         initializer.init();
     }
 
@@ -153,63 +158,65 @@ public class DefaultFactoryManager implements FactoryManager {
      * Reset the FactoryManager to an uninitialized state.
      */
     public void clear() {
-        factories = new HashMap<FactoryKey, InitializableFactory>();
+        factories = new HashMap<String, Factory>();
     }
 
     // An inner class to initialize the FactoryManager and its factories
     private class FactoryManagerInitializer {
-        private static final String FACTORY_CONFIG_PROPERTY_NAME = "lida.factories.config";
-        private static final String DEFAULT_FACTORY_CONFIG_XML_FILE_PATH = "configs/lidaFactories.xml";
-        private static final String DEFAULT_FACTORIES_CONFIG_SCHEMA_FILE_PATH = "edu/memphis/ccrg/lida/framework/initialization/config/LidaFactoriesXMLSchema.xsd";
 
+        // Property name that is expected to hold the file location of the
+        // factories configuration file
+        private static final String FACTORY_CONFIG_PROPERTY_NAME = "lida.factories.config";
+
+        // XML Schema for factories configuration file
+        private static final String DEFAULT_FACTORIES_CONFIG_SCHEMA = "edu/memphis/ccrg/lida/framework/initialization/config/LidaFactoriesXMLSchema.xsd";
+
+        // Flag that turns XML schema validation on/off
         private static final boolean VALIDATE_XML = false;
 
         private final GlobalInitializer globalInitializer = GlobalInitializer.getInstance();
 
-        private final String factoryConfigFilename;
-
-        private final DefaultFactoryManager manager = DefaultFactoryManager.this;
+        // FactoryManager configuration filename
+        private final String factoriesConfigFilename;
 
         // Map between factory aliases and the factory configurations that they
         // correspond
         private final Map<String, LidaFactoryDef> factoryAliasMap;
 
         public FactoryManagerInitializer(Properties p) {
-            factoryConfigFilename = p.getProperty(FACTORY_CONFIG_PROPERTY_NAME,
-                    DEFAULT_FACTORY_CONFIG_XML_FILE_PATH);
+            factoriesConfigFilename = p.getProperty(FACTORY_CONFIG_PROPERTY_NAME, null);
 
             factoryAliasMap = new HashMap<String, LidaFactoryDef>();
         }
 
         public void init() {
-            try {
-                if (VALIDATE_XML) {
+            if (factoriesConfigFilename == null || factoriesConfigFilename.isEmpty()) {
+                throw new IllegalArgumentException("Factory configuration property "
+                        + FACTORY_CONFIG_PROPERTY_NAME + " is null or missing.");
+            }
 
-                    // Verify the Lida factories configuration file conforms to
-                    // the expected layout
-                    if (!XmlUtils.validateXmlFile(factoryConfigFilename,
-                            DEFAULT_FACTORIES_CONFIG_SCHEMA_FILE_PATH)) {
-                        logger.log(
-                                Level.WARNING,
-                                "LidaFactories configuration file {0} violates the expected XML schema defined in {1}",
-                                new Object[] { factoryConfigFilename,
-                                        DEFAULT_FACTORIES_CONFIG_SCHEMA_FILE_PATH });
-                        return;
-                    }
+            // Verify the factories configuration file conforms to the
+            // expected layout
+            if (VALIDATE_XML) {
+                if (!XmlUtils.validateXmlFile(factoriesConfigFilename,
+                        DEFAULT_FACTORIES_CONFIG_SCHEMA)) {
+
+                    throw new IllegalArgumentException(
+                            "LidaFactories configuration file violates the expected XML schema.");
                 }
+            }
 
+            try {
                 loadFactories();
-            } catch (Exception e) {
-                logger.log(
-                        Level.WARNING,
-                        "Failed to load LidaFactories configuration file {0}.  Encountered exception {1}.",
-                        new Object[] { factoryConfigFilename, e });
+            } catch (JAXBException | FileNotFoundException e) {
+                throw new IllegalArgumentException(
+                        "Failed to load factory configuration.  Root cause: " + e);
             }
         }
 
-        private void loadFactories() {
+        private void loadFactories() throws FileNotFoundException, JAXBException {
 
-            LidaFactoriesXmlDoc xmlDoc = new LidaFactoriesXmlDoc(factoryConfigFilename);
+            LidaFactoriesXmlDoc xmlDoc = new LidaFactoriesXmlDoc(factoriesConfigFilename);
 
             List<LidaFactoryDef> factories = xmlDoc.getFactories();
 
@@ -246,24 +253,45 @@ public class DefaultFactoryManager implements FactoryManager {
             String factoryName = factoryDef.getFactoryName();
             Class<? extends Factory> factoryInterface = getFactoryInterface(factoryDef);
 
-            FactoryKey key = new FactoryKey(factoryName, factoryInterface);
-            if (factories.containsKey(key)) {
+            if (factories.containsKey(factoryName)) {
                 logger.log(
                         Level.WARNING,
                         "Encountered multiple factories with name {1} and type {2}.  Only first will be retained.",
                         new Object[] { TaskManager.getCurrentTick(), factoryName,
-                                factoryInterface.getCanonicalName() });
+                                factoryInterface });
+
+                return;
             }
 
-            Set<String> dependencies = factoryDef.getDependencies();
-            initDependencies(factoryDef, dependencies);
+            // Initialize factory dependencies. If any of the factories this
+            // factory is dependent on fail to initialize then this factory's
+            // initialization will be aborted
+            try {
+                initDependencies(factoryDef);
+            } catch (IllegalStateException e) {
+                logger.log(
+                        Level.WARNING,
+                        "Failed to initialize dependencies for factory with name {1} and type {2}.",
+                        new Object[] { TaskManager.getCurrentTick(), factoryName,
+                                factoryInterface });
+                return;
+            }
 
             InitializableFactory factory = createFactory(factoryDef);
             if (factory == null) {
                 logger.log(Level.WARNING,
-                        "Failed to create factory with name {1} and type {2}.",
-                        new Object[] { TaskManager.getCurrentTick(), factoryName,
-                                factoryInterface.getCanonicalName() });
+                        "Failed to create factory with name {1} and type {2}.", new Object[] {
+                                TaskManager.getCurrentTick(), factoryName, factoryInterface });
+                return;
+            }
+
+            if (!factoryInterface.isAssignableFrom(factory.getClass())) {
+                logger.log(
+                        Level.WARNING,
+                        "Type {1} is incompatible with implementing class {2}.",
+                        new Object[] { TaskManager.getCurrentTick(), factoryInterface,
+                                factory.getClass() });
+
                 return;
             }
 
@@ -271,66 +299,72 @@ public class DefaultFactoryManager implements FactoryManager {
                 // Initialize factory with factory data
                 factory.init(factoryDef);
 
-            } catch (IllegalArgumentException e) {
-                logger.log(Level.WARNING,
-                        "Failed to initialize factory with name {1} and type {2}: {3}",
-                        new Object[] { TaskManager.getCurrentTick(), key.getAlias(),
-                                key.getType().getCanonicalName(), e });
+            } catch (Exception e) {
+                logger.log(
+                        Level.WARNING,
+                        "Failed to initialize factory with name {1} and type {2}. Root cause was {3}.",
+                        new Object[] { TaskManager.getCurrentTick(), factoryName,
+                                factoryInterface, e });
                 return;
             }
 
             // Add factory to FactoryManager registry
-            manager.factories.put(key, factory);
+            factories.put(factoryName, factory);
 
-            logger.log(Level.INFO,
+            logger.log(
+                    Level.INFO,
                     "Successfully registered factory with name {1} and type {2}.",
-                    new Object[] { TaskManager.getCurrentTick(), key.getAlias(),
-                            key.getType().getCanonicalName() });
-            
+                    new Object[] { TaskManager.getCurrentTick(), factoryName, factoryInterface });
+
+            // If factory was set as "default" for type, then add to
+            // FactoryManager's default factory registry
             if (factoryDef.isDefault()) {
                 if (defaultFactories.containsKey(factory.getClass())) {
                     logger.log(
                             Level.WARNING,
                             "Encountered multiple default factories for type type {1}.  Only first will be retained.",
-                            new Object[] { TaskManager.getCurrentTick(),
-                                    key.getType().getCanonicalName() });
+                            new Object[] { TaskManager.getCurrentTick(), factoryInterface });
                 } else {
-                    defaultFactories.put(factory.getClass(), key);
-                    
+                    defaultFactories.put(factoryInterface, factoryName);
+
                     logger.log(Level.INFO,
                             "Factory with name {1} has been marked as default for type {2}.",
-                            new Object[] { TaskManager.getCurrentTick(), key.getAlias(),
-                                    key.getType().getCanonicalName() });
+                            new Object[] { TaskManager.getCurrentTick(), factoryName,
+                                    factoryInterface });
                 }
             }
 
             // Add to GlobalInitializer to resolve factory based on factory
             // alias -- this is useful for initializing factories that depend on
             // other factories
-            globalInitializer.setAttribute(factoryDef.getFactoryName(), factoryInterface);
+            globalInitializer.setAttribute(factoryName, factoryInterface);
         }
 
-        private void initDependencies(LidaFactoryDef factoryDef, Set<String> dependencies) {
+        private void initDependencies(LidaFactoryDef factoryDef) {
+            if (factoryDef == null) {
+                throw new IllegalArgumentException("Factory definition cannot be null");
+            }
+
+            Set<String> dependencies = factoryDef.getDependencies();
             if (dependencies == null || dependencies.isEmpty()) {
                 return;
             }
 
+            // Check for circular dependencies, and throw exception in one is
+            // encountered
             if (hasCircularDependency(factoryDef, null)) {
-                logger.log(
-                        Level.WARNING,
-                        "Circular dependency discovered for factory {0}.  Factory will not be initialized.",
-                        new Object[] { factoryDef.getFactoryName() });
-                return;
+                throw new IllegalStateException(
+                        "Failed to initialize factory dependencies: circular dependency discovered");
             }
 
+            // Initialize each of the factories that this factory listed as a
+            // dependency if it has not already been initialized
             for (String factoryDependency : dependencies) {
                 LidaFactoryDef dependDef = factoryAliasMap.get(factoryDependency);
                 if (dependDef == null) {
-                    logger.log(
-                            Level.WARNING,
-                            "Unable to resolve factory dependency definition {0} for factory {1}.",
-                            new Object[] { factoryDependency, factoryDef.getFactoryName() });
-                    continue;
+                    throw new IllegalStateException(
+                            "Failed to initialize factory dependencies: unable to find factory definition for "
+                                    + factoryDependency);
                 } else {
                     initFactory(dependDef);
                 }
@@ -340,7 +374,7 @@ public class DefaultFactoryManager implements FactoryManager {
         private boolean hasCircularDependency(LidaFactoryDef factoryDef,
                 Stack<String> predecessors) {
             if (factoryDef == null) {
-                return false;
+                throw new IllegalArgumentException("Factory definition cannot be null");
             }
 
             if (predecessors == null) {
@@ -370,9 +404,10 @@ public class DefaultFactoryManager implements FactoryManager {
         }
 
         @SuppressWarnings("unchecked")
-        private Class<? extends Factory> getFactoryInterface(LidaFactoryDef factoryDef) {
+        private Class<? extends Factory> getFactoryInterface(LidaFactoryDef factoryDef)
+                throws IllegalArgumentException {
             if (factoryDef == null) {
-                return null;
+                throw new IllegalArgumentException("Factory definition cannot be null");
             }
 
             String factoryType = factoryDef.getFactoryType();
@@ -385,12 +420,22 @@ public class DefaultFactoryManager implements FactoryManager {
                         new Object[] { factoryDef.getFactoryType() });
             }
 
+            if (fInterface == null) {
+                throw new IllegalArgumentException(
+                        "Unable to resolve interface class for factory type " + factoryType);
+            }
             return fInterface;
         }
 
         private boolean isFactoryInitialized(LidaFactoryDef factoryDef) {
+            if (factoryDef == null) {
+                throw new IllegalArgumentException("Factory definition cannot be null");
+            }
+
+            String factoryName = factoryDef.getFactoryName();
             Class<? extends Factory> factoryInterface = getFactoryInterface(factoryDef);
-            if (manager.getFactory(factoryInterface) != null) {
+
+            if (factories.get(factoryName) != null) {
                 return true;
             }
             return false;
@@ -399,7 +444,7 @@ public class DefaultFactoryManager implements FactoryManager {
         @SuppressWarnings("unchecked")
         private InitializableFactory createFactory(LidaFactoryDef factoryDef) {
             if (factoryDef == null) {
-                return null;
+                throw new IllegalArgumentException("Factory definition cannot be null");
             }
 
             InitializableFactory factory = null;
