@@ -13,6 +13,7 @@ package edu.memphis.ccrg.lida.framework.initialization;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -24,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
@@ -71,7 +73,7 @@ public class XmlUtils {
         boolean result = false;
         // 1. Lookup a factory for the W3C XML Schema language
         SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
- 
+
         // Register custom LSResourceResolver
         factory.setResourceResolver(new XmlUtils.CustomSchemaResourceResolver());
 
@@ -475,26 +477,21 @@ public class XmlUtils {
      *            the target class
      * @return an object of the target class that is initialized with the
      *         contents of the specified XML file
+     * @throws JAXBException
+     * @throws FileNotFoundException
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T unmarshalXmlToObject(String xmlFilePath, Class<T> clazz) {
+    public static <T> T unmarshalXmlToObject(String xmlFilePath, Class<T> clazz)
+            throws FileNotFoundException, JAXBException {
         if (clazz == null) {
             return null;
         }
 
-        T result = null;
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+        JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
 
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            result = (T) jaxbUnmarshaller.unmarshal(new java.io.FileInputStream(xmlFilePath));
+        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
-        } catch (Exception e) {
-            logger.log(
-                    Level.WARNING,
-                    "Failed to unmarhall the contents of the XML file {0} to the target class {1}",
-                    new Object[] { xmlFilePath, clazz });
-        }
+        @SuppressWarnings("unchecked")
+        T result = (T) jaxbUnmarshaller.unmarshal(new java.io.FileInputStream(xmlFilePath));
 
         return result;
     }
@@ -507,34 +504,28 @@ public class XmlUtils {
      *            the JAXB object
      * @param xmlFilePath
      *            an absolute or relative path to the XML file
+     * @throws JAXBException
      */
-    public static <T> void marshalObjectToXml(Object object, String xmlFilePath) {
+    public static <T> void marshalObjectToXml(Object object, String xmlFilePath)
+            throws JAXBException {
         if (object == null) {
             return;
         }
 
-        try {
+        JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-            JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
-            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        // Pretty print output
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-            // Pretty print output
-            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
-            File xmlFile = new File(xmlFilePath);
-            jaxbMarshaller.marshal(object, xmlFile);
-
-        } catch (Exception e) {
-            logger.log(
-                    Level.WARNING,
-                    "Failed to marhall the contents of the specified class {0} to the file {1}",
-                    new Object[] { object.getClass(), xmlFilePath });
-        }
+        File xmlFile = new File(xmlFilePath);
+        jaxbMarshaller.marshal(object, xmlFile);
     }
 
     // resource resolver for processing "includes" in the XSDs
     private static class CustomSchemaResourceResolver implements LSResourceResolver {
 
+        // TODO: This needs to be configured differently
         private static final String CLASSPATH = "edu/memphis/ccrg/lida/framework/initialization/config/";
 
         @Override
