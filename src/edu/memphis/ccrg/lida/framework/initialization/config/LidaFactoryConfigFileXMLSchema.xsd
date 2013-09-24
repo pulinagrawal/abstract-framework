@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://ccrg.cs.memphis.edu/LidaFactoriesXMLSchema"
+<xs:schema targetNamespace="http://ccrg.cs.memphis.edu/LidaFactoryConfigFileXMLSchema"
 	elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:tns="http://ccrg.cs.memphis.edu/LidaFactoriesXMLSchema">
+	xmlns:tns="http://ccrg.cs.memphis.edu/LidaFactoryConfigFileXMLSchema"
+	xmlns:fact="http://ccrg.cs.memphis.edu/LidaFactoriesXMLSchema">
 
-	<xs:include schemaLocation="LidaFactoriesXMLSchemaTypes.xsd" />
+	<xs:import namespace="http://ccrg.cs.memphis.edu/LidaFactoriesXMLSchema"
+		schemaLocation="LidaFactoriesXMLSchema.xsd" />
 
 	<xs:element name="lidaFactoryConfigFile">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="factoryConfig" type="tns:factoryConfig"
+				<xs:element name="factoryConfig" type="fact:factoryConfig"
 					maxOccurs="1" minOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
