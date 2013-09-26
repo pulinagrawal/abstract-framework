@@ -25,6 +25,19 @@ import edu.memphis.ccrg.lida.framework.tasks.FrameworkTask;
 public interface StrategyFactory extends InitializableFactory {
 
     /**
+     * Returns a default implementation matching the specified {@link Strategy}
+     * interface. If no match is found for the specified interface, or no
+     * strategy was registered as the default for that type, then {@code null}
+     * will be returned.
+     * 
+     * @param type
+     *            a {@link Strategy} interface for which an implementation will
+     *            be returned
+     * @return an implementation for the specified interface
+     */
+    public <T extends Strategy> T getStrategy(Class<T> type);
+
+    /**
      * Returns an implementation matching the requested alias and type, or
      * {@code null} if the factory does not contain a matching {@link Strategy}.
      * 
@@ -42,20 +55,4 @@ public interface StrategyFactory extends InitializableFactory {
      */
     public <T extends Strategy> T getStrategy(String alias, Class<T> type);
 
-    /**
-     * Returns whether this factory contains type specified {@link Strategy}
-     * type.
-     * 
-     * @param alias
-     *            an alias for the strategy (set in the XML factory
-     *            configuration)
-     * 
-     * @param type
-     *            the interface corresponding to the desired {@code Strategy}
-     *            implementation
-     * 
-     * @return true if factory contains an implementation corresponding to the
-     *         specified alias and type
-     */
-    public <T extends Strategy> boolean containsStrategy(String alias, Class<T> type);
 }

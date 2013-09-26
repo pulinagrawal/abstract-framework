@@ -22,8 +22,8 @@ import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
 
 /**
  * A default implementation of the {@link StrategyFactory} interface. Instances
- * of this class will be accessible via the {@link DefaultFactoryManager}, and will be
- * configured using the Lida XML configuration files.
+ * of this class will be accessible via the {@link DefaultFactoryManager}, and
+ * will be configured using the Lida XML configuration files.
  * 
  * @author Sean Kugele
  */
@@ -34,17 +34,42 @@ public class DefaultStrategyFactory implements StrategyFactory {
     /*
      * Map of all the strategies (of any type) available to this factory
      */
-    private final Map<FactoryKey, Strategy> strategies = new HashMap<FactoryKey, Strategy>();
+    private final Map<String, Strategy> strategies = new HashMap<String, Strategy>();
+
+    /*
+     * Strategies that were registered as defaults. This map is used when a
+     * strategy "name" is not provided to getStrategy.
+     */
+    private Map<Class<? extends Strategy>, String> defaultStrategies = new HashMap<Class<? extends Strategy>, String>();
 
     // Package private. Should be instantiated in the FactoryManager
     DefaultStrategyFactory() {
 
     }
 
+    @Override
+    public <T extends Strategy> T getStrategy(Class<T> type) {
+        if (type == null) {
+            return null;
+        }
+
+        String name = defaultStrategies.get(type);
+
+        if (name == null) {
+            logger.log(Level.WARNING,
+                    "StrategyFactory does not contain a default strategy for type {1}",
+                    new Object[] { TaskManager.getCurrentTick(), type });
+
+            return null;
+        }
+
+        return getStrategy(name, type);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <T extends Strategy> T getStrategy(String name, Class<T> type) {
-        if (!containsStrategy(name, type)) {
+        if (!strategies.containsKey(name)) {
             logger.log(Level.WARNING,
                     "Factory does not contain a strategy with name {1} and type {2}",
                     new Object[] { TaskManager.getCurrentTick(), name, type });
@@ -52,14 +77,7 @@ public class DefaultStrategyFactory implements StrategyFactory {
             return null;
         }
 
-        FactoryKey key = new FactoryKey(name, type);
-        return (T) strategies.get(key);
-    }
-
-    @Override
-    public <T extends Strategy> boolean containsStrategy(String name, Class<T> type) {
-        FactoryKey key = new FactoryKey(name, type);
-        return strategies.containsKey(key);
+        return (T) strategies.get(name);
     }
 
     @Override
@@ -108,67 +126,50 @@ public class DefaultStrategyFactory implements StrategyFactory {
             }
 
             for (LidaFactoryObject obj : objects) {
-                FactoryKey key = createFactoryObjectKey(obj);
-                if (strategies.containsKey(key)) {
+                String strategyName = obj.getName();
+                String strategyType = obj.getObjectType();
+
+                if (strategies.containsKey(strategyName)) {
                     logger.log(
                             Level.WARNING,
-                            "Encountered multiple strategies with name {1} and type {2}.  Only first will be retained.",
-                            new Object[] { TaskManager.getCurrentTick(), key.getAlias(), key.getType().getCanonicalName() });
+                            "Encountered multiple strategies with name {1}.  Only first will be retained.",
+                            new Object[] { TaskManager.getCurrentTick(), strategyName });
                 }
 
-                Strategy strategy = createStrategy(obj);
+                Strategy strategy = createFactoryObject(obj, Strategy.class);
 
                 // Initialize strategy parameters
                 initStrategy(strategy, obj);
 
                 // Add to strategy map in outer class
-                strategies.put(key, strategy);
+                strategies.put(strategyName, strategy);
+
+                logger.log(
+                        Level.INFO,
+                        "Successfully registered strategy with name {1} and type {2}.",
+                        new Object[] { TaskManager.getCurrentTick(), strategyName, strategyType });
+
+                // If strategy was set as "default" for type, then add to
+                // StrategyFactory's default strategies registry
+                if (obj.isDefault()) {
+                    @SuppressWarnings("unchecked")
+                    Class<? extends Strategy> strategyInterface = (Class<? extends Strategy>) getInterface(obj);
+                    if (defaultStrategies.containsKey(strategyInterface)) {
+                        logger.log(
+                                Level.WARNING,
+                                "Encountered multiple default strategies for type {1}.  Only first will be retained.",
+                                new Object[] { TaskManager.getCurrentTick(), strategyInterface });
+                    } else {
+                        defaultStrategies.put(strategyInterface, strategyName);
+
+                        logger.log(
+                                Level.INFO,
+                                "Strategy with name {1} has been marked as default for type {2}.",
+                                new Object[] { TaskManager.getCurrentTick(), strategyName,
+                                        strategyInterface });
+                    }
+                }
             }
-        }
-
-        private FactoryKey createFactoryObjectKey(LidaFactoryObject factoryObject) {
-            if (factoryObject == null) {
-                return null;
-            }
-
-            String name = factoryObject.getName();
-            String type = factoryObject.getObjectType();
-
-            Class<?> clazz = null;
-            try {
-                clazz = Class.forName(type);
-            } catch (ClassNotFoundException e) {
-                logger.log(Level.WARNING, "Unable to resolve interface {1}.", new Object[] {
-                        TaskManager.getCurrentTick(), type });
-
-                return null;
-            }
-
-            return new FactoryKey(name, clazz);
-        }
-
-        private Strategy createStrategy(LidaFactoryObject factoryObject) {
-            Strategy strategy = null;
-
-            try {
-                @SuppressWarnings("unchecked")
-                Class<? extends Strategy> clazz = (Class<? extends Strategy>) Class
-                        .forName(factoryObject.getObjectImpl());
-
-                Constructor<? extends Strategy> constructor = clazz.getDeclaredConstructor();
-
-                strategy = constructor.newInstance();
-
-            } catch (Exception e) {
-                logger.log(Level.WARNING,
-                        "Unable to instantiate class {1} of strategy type {2}.", new Object[] {
-                                TaskManager.getCurrentTick(), factoryObject.getObjectImpl(),
-                                factoryObject.getObjectType() });
-
-                return null;
-            }
-
-            return strategy;
         }
 
         private void initStrategy(Strategy strategy, LidaFactoryObject factoryObject) {
@@ -180,41 +181,6 @@ public class DefaultStrategyFactory implements StrategyFactory {
 
             Map<String, Object> typedParams = getTypedParams(params);
             strategy.init(typedParams);
-        }
-
-        // TODO: Move this elsewhere so that all factories can share
-        public Map<String, Object> getTypedParams(List<LidaParam> params) {
-            Map<String, Object> prop = new HashMap<String, Object>();
-            for (LidaParam param : params) {
-                String name = param.getName();
-                String type = param.getType();
-                String sValue = param.getValue();
-                Object value = sValue;
-                if (sValue != null) {
-
-                    if (type == null || "string".equalsIgnoreCase(type)) {
-                        value = sValue;
-                    } else if ("int".equalsIgnoreCase(type)) {
-                        try {
-                            value = Integer.parseInt(sValue);
-                        } catch (NumberFormatException e) {
-                            value = null;
-                            logger.log(Level.FINE, e.toString(), TaskManager.getCurrentTick());
-                        }
-                    } else if ("double".equalsIgnoreCase(type)) {
-                        try {
-                            value = Double.parseDouble(sValue);
-                        } catch (NumberFormatException e) {
-                            value = null;
-                            logger.log(Level.FINE, e.toString(), TaskManager.getCurrentTick());
-                        }
-                    } else if ("boolean".equalsIgnoreCase(type)) {
-                        value = Boolean.parseBoolean(sValue);
-                    }
-                }
-                prop.put(name, value);
-            }
-            return prop;
         }
     }
 }
