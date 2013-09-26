@@ -95,7 +95,7 @@ public class DefaultFactoryManager implements FactoryManager {
         if (name == null) {
             logger.log(Level.WARNING,
                     "FactoryManager does not contain a default factory for type {1}",
-                    new Object[] { TaskManager.getCurrentTick(), type.getCanonicalName() });
+                    new Object[] { TaskManager.getCurrentTick(), type });
 
             return null;
         }
