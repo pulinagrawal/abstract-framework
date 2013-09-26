@@ -7,8 +7,11 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.factories;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +21,8 @@ import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFact
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryDef;
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryObject;
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaParam;
+import edu.memphis.ccrg.lida.framework.strategies.Strategy;
+import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
 
 /**
  * 
@@ -121,6 +126,87 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
         
         return new ArrayList<LidaParam>();
     } 
+    
+    @SuppressWarnings("unchecked")
+    protected Class<?> getInterface(LidaFactoryObject factoryObj)
+            throws IllegalArgumentException {
+        if (factoryObj == null) {
+            throw new IllegalArgumentException("Factory object definition cannot be null");
+        }
+
+        String objType = factoryObj.getObjectType();
+
+        Class<?> objInterface = null;
+        try {
+            objInterface = Class.forName(objType);
+        } catch (ClassNotFoundException e) {
+            logger.log(Level.WARNING, "Unable to find factory object type {1}.",
+                    new Object[] { TaskManager.getCurrentTick(), objType });
+        }
+
+        if (objInterface == null) {
+            throw new IllegalArgumentException(
+                    "Unable to resolve interface class for factory object type " + objType);
+        }
+        return objInterface;
+    }
+    
+    protected <C> C createFactoryObject(LidaFactoryObject factoryObject, Class<C> interfaceClass) {
+        C newObject = null;
+
+        try {
+            Class<?> clazz = Class.forName(factoryObject.getObjectImpl());
+
+            @SuppressWarnings("unchecked")
+            Constructor<C> constructor = (Constructor<C>) clazz.getDeclaredConstructor();
+
+            newObject = constructor.newInstance();
+
+        } catch (Exception e) {
+            logger.log(Level.WARNING,
+                    "Unable to instantiate class {1} of factory object type {2}.", new Object[] {
+                            TaskManager.getCurrentTick(), factoryObject.getObjectImpl(),
+                            factoryObject.getObjectType() });
+
+            return null;
+        }
+
+        return newObject;
+    }
+    
+    protected Map<String, Object> getTypedParams(List<LidaParam> params) {
+        Map<String, Object> prop = new HashMap<String, Object>();
+        for (LidaParam param : params) {
+            String name = param.getName();
+            String type = param.getType();
+            String sValue = param.getValue();
+            Object value = sValue;
+            if (sValue != null) {
+
+                if (type == null || "string".equalsIgnoreCase(type)) {
+                    value = sValue;
+                } else if ("int".equalsIgnoreCase(type)) {
+                    try {
+                        value = Integer.parseInt(sValue);
+                    } catch (NumberFormatException e) {
+                        value = null;
+                        logger.log(Level.FINE, e.toString(), TaskManager.getCurrentTick());
+                    }
+                } else if ("double".equalsIgnoreCase(type)) {
+                    try {
+                        value = Double.parseDouble(sValue);
+                    } catch (NumberFormatException e) {
+                        value = null;
+                        logger.log(Level.FINE, e.toString(), TaskManager.getCurrentTick());
+                    }
+                } else if ("boolean".equalsIgnoreCase(type)) {
+                    value = Boolean.parseBoolean(sValue);
+                }
+            }
+            prop.put(name, value);
+        }
+        return prop;
+    }
     
     private void checkPreconditions() {
 
