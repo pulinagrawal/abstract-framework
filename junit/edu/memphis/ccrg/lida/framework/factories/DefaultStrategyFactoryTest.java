@@ -7,7 +7,6 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.factories;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ public class DefaultStrategyFactoryTest {
         List<LidaFactoryDef> factories = xmlDoc.getFactories();
         LidaFactoryDef strategyFactory = null;
         for (LidaFactoryDef f : factories) {
-            if ("StrategyFactory".equals(f.getFactoryName())) {
+            if ("defaultStrategyFactory".equals(f.getFactoryName())) {
                 strategyFactory = f;
                 break;
             }
@@ -78,35 +77,44 @@ public class DefaultStrategyFactoryTest {
     public final void testGetStrategy() {
         List<Strategy> strategies = new ArrayList<Strategy>();
 
-        strategies.add(factory.getStrategy("defaultExcite", ExciteStrategy.class));
-        strategies.add(factory.getStrategy("defaultDecay", DecayStrategy.class));
-        strategies.add(factory.getStrategy("slowExcite", ExciteStrategy.class));
-        strategies.add(factory.getStrategy("slowDecay", DecayStrategy.class));
-        strategies.add(factory.getStrategy("pamDefaultExcite", ExciteStrategy.class));
-        strategies.add(factory.getStrategy("pamDefaultDecay", DecayStrategy.class));
-        strategies.add(factory.getStrategy("noExcite", ExciteStrategy.class));
-        strategies.add(factory.getStrategy("noDecay", DecayStrategy.class));
+        strategies.add(factory.getStrategy("defaultExciteStrategy", ExciteStrategy.class));
+        strategies.add(factory.getStrategy("defaultDecayStrategy", DecayStrategy.class));
+        strategies.add(factory.getStrategy("slowExciteStrategy", ExciteStrategy.class));
+        strategies.add(factory.getStrategy("slowDecayStrategy", DecayStrategy.class));
+        strategies.add(factory.getStrategy("pamDefaultExciteStrategy", ExciteStrategy.class));
+        strategies.add(factory.getStrategy("pamDefaultDecayStrategy", DecayStrategy.class));
+        strategies.add(factory.getStrategy("noExciteStrategy", ExciteStrategy.class));
+        strategies.add(factory.getStrategy("noDecayStrategy", DecayStrategy.class));
 
         for (Strategy s : strategies) {
             assertTrue(s != null);
         }
-    }
-
-    /**
-     * Test method for
-     * {@link edu.memphis.ccrg.lida.framework.factories.DefaultStrategyFactory#containsStrategy(java.lang.String, java.lang.Class)}
-     * .
-     */
-    @Test
-    public final void testContainsStrategy() {
-        assertTrue(factory.containsStrategy("defaultExcite", ExciteStrategy.class));
-        assertTrue(factory.containsStrategy("defaultDecay", DecayStrategy.class));
-        assertTrue(factory.containsStrategy("slowExcite", ExciteStrategy.class));
-        assertTrue(factory.containsStrategy("slowDecay", DecayStrategy.class));
-        assertTrue(factory.containsStrategy("pamDefaultExcite", ExciteStrategy.class));
-        assertTrue(factory.containsStrategy("pamDefaultDecay", DecayStrategy.class));
-        assertTrue(factory.containsStrategy("noExcite", ExciteStrategy.class));
-        assertTrue(factory.containsStrategy("noDecay", DecayStrategy.class));
+       
+        Strategy s1, s2 = null;
+        
+        // Test default excite strategy
+        s1 = factory.getStrategy(ExciteStrategy.class);
+        assertTrue(s1 != null);
+        s2 = factory.getStrategy("defaultExciteStrategy", ExciteStrategy.class); 
+        assertTrue(s1 == s2);
+       
+        // Test default decay strategy
+        s1 = factory.getStrategy(DecayStrategy.class);
+        assertTrue(s1 != null);
+        s2 = factory.getStrategy("defaultDecayStrategy", DecayStrategy.class); 
+        assertTrue(s1 == s2);
+        s2 = factory.getStrategy("slowExciteStrategy", ExciteStrategy.class);
+        assertTrue(s1 != s2);
+        s2 = factory.getStrategy("slowDecayStrategy", DecayStrategy.class);
+        assertTrue(s1 != s2);
+        s2 = factory.getStrategy("pamDefaultExciteStrategy", ExciteStrategy.class);
+        assertTrue(s1 != s2);
+        s2 = factory.getStrategy("pamDefaultDecayStrategy", DecayStrategy.class);
+        assertTrue(s1 != s2);
+        s2 = factory.getStrategy("noExciteStrategy", ExciteStrategy.class);
+        assertTrue(s1 != s2);
+        s2 = factory.getStrategy("noDecayStrategy", DecayStrategy.class);
+        assertTrue(s1 != s2);
     }
 
     /**
@@ -114,7 +122,7 @@ public class DefaultStrategyFactoryTest {
      */
     @Test
     public final void testStrategyInit() {
-        Strategy strategy = factory.getStrategy("defaultExcite", ExciteStrategy.class);
+        Strategy strategy = factory.getStrategy("defaultExciteStrategy", ExciteStrategy.class);
         assertTrue(strategy != null);
         
         Map<String, ?> params = strategy.getParameters();
@@ -131,4 +139,6 @@ public class DefaultStrategyFactoryTest {
         boolean flyweightAsBoolean = (Boolean) flyweight;
         assertTrue(flyweightAsBoolean);
     }
+    
+    // TODO: Add error handling test cases
 }
