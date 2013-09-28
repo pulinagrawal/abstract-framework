@@ -17,11 +17,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import edu.memphis.ccrg.lida.framework.initialization.GlobalInitializer;
+import edu.memphis.ccrg.lida.framework.initialization.InitializableImpl;
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryConfig;
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryDef;
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryObject;
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaParam;
-import edu.memphis.ccrg.lida.framework.strategies.Strategy;
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
 
 /**
@@ -32,8 +32,8 @@ import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
  *            type of the factory to be initialized
  * 
  */
-public abstract class AbstractFactoryInitializer<T extends InitializableFactory> implements
-        FactoryInitializer<T> {
+public abstract class AbstractFactoryInitializer<T extends InitializableFactory> extends
+        InitializableImpl implements FactoryInitializer<T> {
 
     private static final Logger logger = Logger.getLogger(FactoryInitializer.class
             .getCanonicalName());
@@ -73,6 +73,8 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
 
     @Override
     public void init() {
+        super.init();
+        
         checkPreconditions();
         loadData();
     }
@@ -109,24 +111,25 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
         if (factoryDef != null) {
             LidaFactoryConfig factoryConfig = factoryDef.getFactoryConfig();
             if (factoryConfig != null) {
-               return factoryConfig.getFactoryObjects();
+                return factoryConfig.getFactoryObjects();
             }
         }
-        
+
         return new ArrayList<LidaFactoryObject>();
     }
-    
+
+    // TODO: Integrate this with the functionality in InitializableImpl
     protected List<LidaParam> getFactoryParams() {
         if (factoryDef != null) {
             LidaFactoryConfig factoryConfig = factoryDef.getFactoryConfig();
             if (factoryConfig != null) {
-               return factoryConfig.getFactoryParams();
+                return factoryConfig.getFactoryParams();
             }
         }
-        
+
         return new ArrayList<LidaParam>();
-    } 
-    
+    }
+
     @SuppressWarnings("unchecked")
     protected Class<?> getInterface(LidaFactoryObject factoryObj)
             throws IllegalArgumentException {
@@ -140,8 +143,8 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
         try {
             objInterface = Class.forName(objType);
         } catch (ClassNotFoundException e) {
-            logger.log(Level.WARNING, "Unable to find factory object type {1}.",
-                    new Object[] { TaskManager.getCurrentTick(), objType });
+            logger.log(Level.WARNING, "Unable to find factory object type {1}.", new Object[] {
+                    TaskManager.getCurrentTick(), objType });
         }
 
         if (objInterface == null) {
@@ -150,7 +153,7 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
         }
         return objInterface;
     }
-    
+
     protected <C> C createFactoryObject(LidaFactoryObject factoryObject, Class<C> interfaceClass) {
         C newObject = null;
 
@@ -164,8 +167,8 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
 
         } catch (Exception e) {
             logger.log(Level.WARNING,
-                    "Unable to instantiate class {1} of factory object type {2}.", new Object[] {
-                            TaskManager.getCurrentTick(), factoryObject.getObjectImpl(),
+                    "Unable to instantiate class {1} of factory object type {2}.",
+                    new Object[] { TaskManager.getCurrentTick(), factoryObject.getObjectImpl(),
                             factoryObject.getObjectType() });
 
             return null;
@@ -173,7 +176,7 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
 
         return newObject;
     }
-    
+
     protected Map<String, Object> getTypedParams(List<LidaParam> params) {
         Map<String, Object> prop = new HashMap<String, Object>();
         for (LidaParam param : params) {
@@ -207,7 +210,7 @@ public abstract class AbstractFactoryInitializer<T extends InitializableFactory>
         }
         return prop;
     }
-    
+
     private void checkPreconditions() {
 
         // Verify that the supplied FactoryDef matches the factory's class

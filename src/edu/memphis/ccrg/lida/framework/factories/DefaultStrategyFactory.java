@@ -7,7 +7,6 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.factories;
 
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,16 +30,16 @@ public class DefaultStrategyFactory implements StrategyFactory {
     private static final Logger logger = Logger.getLogger(DefaultStrategyFactory.class
             .getCanonicalName());
 
-    /*
+    /**
      * Map of all the strategies (of any type) available to this factory
      */
-    private final Map<String, Strategy> strategies = new HashMap<String, Strategy>();
+    protected final Map<String, Strategy> strategies = new HashMap<String, Strategy>();
 
-    /*
+    /**
      * Strategies that were registered as defaults. This map is used when a
      * strategy "name" is not provided to getStrategy.
      */
-    private Map<Class<? extends Strategy>, String> defaultStrategies = new HashMap<Class<? extends Strategy>, String>();
+    protected Map<Class<? extends Strategy>, String> defaultStrategies = new HashMap<Class<? extends Strategy>, String>();
 
     // Package private. Should be instantiated in the FactoryManager
     DefaultStrategyFactory() {
