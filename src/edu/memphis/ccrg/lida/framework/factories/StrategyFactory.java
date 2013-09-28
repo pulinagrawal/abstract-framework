@@ -8,7 +8,6 @@
 package edu.memphis.ccrg.lida.framework.factories;
 
 import edu.memphis.ccrg.lida.framework.strategies.Strategy;
-import edu.memphis.ccrg.lida.framework.tasks.FrameworkTask;
 
 /**
  * The interface for a StrategyFactory. A StrategyFactory supplies objects
