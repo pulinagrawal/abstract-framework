@@ -39,7 +39,7 @@ public class DefaultStrategyFactory implements StrategyFactory {
      * Strategies that were registered as defaults. This map is used when a
      * strategy "name" is not provided to getStrategy.
      */
-    protected Map<Class<? extends Strategy>, String> defaultStrategies = new HashMap<Class<? extends Strategy>, String>();
+    protected final Map<Class<? extends Strategy>, String> defaultStrategies = new HashMap<Class<? extends Strategy>, String>();
 
     // Package private. Should be instantiated in the FactoryManager
     DefaultStrategyFactory() {
