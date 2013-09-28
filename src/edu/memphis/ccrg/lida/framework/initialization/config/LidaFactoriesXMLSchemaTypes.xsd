@@ -9,18 +9,19 @@
 
 	<xs:complexType name="factory">
 		<xs:all>
-			<xs:element name="factoryType" type="xs:string"/>
-			<xs:element name="factoryImpl" type="xs:string"/>
-			<xs:element name="factoryConfig" type="tns:factoryConfig"/>
+			<xs:element name="factoryType" type="xs:string" />
+			<xs:element name="factoryImpl" type="xs:string" />
+			<xs:element name="factoryConfig" type="tns:factoryConfig" />
 		</xs:all>
 		<xs:attribute name="name" type="xs:string" use="required" />
-		<xs:attribute name="default" type="xs:boolean" default="false"/>
+		<xs:attribute name="default" type="xs:boolean" default="false" />
 		<xs:attribute name="depends" type="xs:string" />
 	</xs:complexType>
 
 	<xs:complexType name="factoryConfig">
 		<xs:sequence>
-			<xs:element name="params" type="lida:params" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="params" type="lida:params" minOccurs="0"
+				maxOccurs="1" />
 			<xs:element name="factoryObjects" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence>
@@ -37,8 +38,8 @@
 
 	<xs:complexType name="factoryObject">
 		<xs:all>
-			<xs:element name="type" type="xs:string"/>
-			<xs:element name="impl" type="xs:string"/>
+			<xs:element name="type" type="xs:string" />
+			<xs:element name="impl" type="xs:string" />
 			<xs:element name="params" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence>
@@ -49,7 +50,8 @@
 			</xs:element>
 		</xs:all>
 		<xs:attribute name="name" type="xs:string" use="required" />
-		<xs:attribute name="default" type="xs:boolean" default="false"/>
+		<xs:attribute name="context" type="tns:factoryObjectContextType" />
+		<xs:attribute name="default" type="xs:boolean" default="false" />
 	</xs:complexType>
 
 	<xs:simpleType name="factoryConfigType">
@@ -58,4 +60,11 @@
 			<xs:enumeration value="external" />
 		</xs:restriction>
 	</xs:simpleType>
+
+	<xs:simpleType name="factoryObjectContextType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="singleton" />
+		</xs:restriction>
+	</xs:simpleType>
+
 </xs:schema>

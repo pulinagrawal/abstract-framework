@@ -75,6 +75,8 @@ public class FactoryObject {
 
     @XmlAttribute(name = "name", required = true)
     protected String name;
+    @XmlAttribute(name = "context")
+    protected FactoryObjectContextType context;
     @XmlAttribute(name = "default")
     protected Boolean _default;
 
@@ -154,6 +156,30 @@ public class FactoryObject {
         this.name = value;
     }
     
+    /**
+     * Gets the value of the context property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link FactoryObjectContextType }
+     *     
+     */
+    public FactoryObjectContextType getContext() {
+        return context;
+    }
+
+    /**
+     * Sets the value of the context property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link FactoryObjectContextType }
+     *     
+     */
+    public void setContext(FactoryObjectContextType value) {
+        this.context = value;
+    }
+
     /**
      * Gets the value of the default property.
      * 

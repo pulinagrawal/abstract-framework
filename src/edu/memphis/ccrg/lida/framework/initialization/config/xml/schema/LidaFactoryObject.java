@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lida.Param;
-import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactories.Factory;
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactories.FactoryObject;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactories.FactoryObjectContextType;
 
 /**
  * @author Sean Kugele
@@ -25,6 +25,7 @@ public class LidaFactoryObject {
 
     private final String objectType;
     private final String objectImpl;
+    private final FactoryObjectContextType objectContextType;
 
     private final List<LidaParam> objectParams;
 
@@ -34,10 +35,11 @@ public class LidaFactoryObject {
 
         objectType = factoryObject.getType();
         objectImpl = factoryObject.getImpl();
-            
+        objectContextType = factoryObject.getContext();
+
         objectParams = transformParams(factoryObject.getParams());
     }
-   
+
     public String getName() {
         return name;
     }
@@ -53,9 +55,13 @@ public class LidaFactoryObject {
     public List<LidaParam> getObjectParams() {
         return objectParams;
     }
-    
+
     public boolean isDefault() {
         return isDefault;
+    }
+    
+    public FactoryObjectContextType getObjectContextType() {
+        return objectContextType;
     }
 
     private static List<LidaParam> transformParams(List<Param> params) {
