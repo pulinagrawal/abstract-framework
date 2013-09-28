@@ -16,6 +16,8 @@ import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
  * @author Sean Kugele
  * 
  */
+
+// TODO: Implement this!
 public interface CognitiveContentFactory extends Factory {
 
     /**
