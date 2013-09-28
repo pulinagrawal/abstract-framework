@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
     "clazz",
     "submodules",
     "associatedmodule",
-    "param",
+    "params",
     "taskspawner",
     "initialTasks",
     "initializerclass"
@@ -67,6 +67,8 @@ public class Module {
     @XmlElement(name = "associatedmodule") 
     protected List<Associatedmodule> associatedmodule;
     
+    @XmlElementWrapper(name = "params") 
+    @XmlElement(name = "param") 
     protected List<Param> params;
     
     @XmlElement(required = true)
