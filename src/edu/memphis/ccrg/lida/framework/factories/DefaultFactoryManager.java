@@ -208,7 +208,10 @@ public class DefaultFactoryManager implements FactoryManager {
 
             try {
                 loadFactories();
-            } catch (JAXBException | FileNotFoundException e) {
+            } catch (JAXBException e) {
+                throw new IllegalArgumentException(
+                        "Failed to load factory configuration.  Root cause: " + e);
+            } catch (FileNotFoundException e) {
                 throw new IllegalArgumentException(
                         "Failed to load factory configuration.  Root cause: " + e);
             }
