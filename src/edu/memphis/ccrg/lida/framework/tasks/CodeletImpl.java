@@ -8,7 +8,6 @@
 package edu.memphis.ccrg.lida.framework.tasks;
 
 import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
-import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructureImpl;
 
 
 /**
@@ -21,7 +20,7 @@ public abstract class CodeletImpl extends FrameworkTaskImpl implements Codelet {
     /**
      * Content which this codelet responds to.
      */
-    protected CognitiveContentStructure soughtContent = new CognitiveContentStructureImpl();
+    protected CognitiveContentStructure soughtContent;
 
     @Override
     public CognitiveContentStructure getSoughtContent() {
