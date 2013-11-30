@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import edu.memphis.ccrg.lida.attentioncodelets.AttentionCodelet;
 import edu.memphis.ccrg.lida.attentioncodelets.AttentionCodeletImpl;
 import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
-import edu.memphis.ccrg.lida.framework.shared.UnmodifiableCognitiveContentStructureImpl;
 import edu.memphis.ccrg.lida.framework.shared.activation.ActivatibleImpl;
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
 
@@ -65,7 +64,9 @@ public class CoalitionImpl extends ActivatibleImpl implements Coalition {
      */
     public CoalitionImpl(CognitiveContentStructure ns, AttentionCodelet c) {
         this();
-        broadcastContent = new UnmodifiableCognitiveContentStructureImpl(ns, true);
+        
+        // TODO: Need to make a copy here
+        broadcastContent = ns;
         creatingAttentionCodelet = c;
         if (creatingAttentionCodelet != null) {
             updateActivation();
