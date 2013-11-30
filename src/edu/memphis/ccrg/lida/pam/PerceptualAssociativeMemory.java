@@ -8,6 +8,7 @@
 package edu.memphis.ccrg.lida.pam;
 
 import edu.memphis.ccrg.lida.framework.FrameworkModule;
+import edu.memphis.ccrg.lida.framework.shared.CognitiveContent;
 import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
 
 /**
@@ -17,9 +18,12 @@ import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
  * pattern), and learning via the learn method.
  * 
  * @author Sean Kugele
+ * @param <T>
+ *            a {@link CognitiveContent} type parameter
  * 
  */
-public interface PerceptualAssociativeMemory extends FrameworkModule {
+public interface PerceptualAssociativeMemory<T extends CognitiveContent> extends
+        FrameworkModule {
 
     /**
      * An enum that specifies the supported "mode" parameters for the receive
@@ -39,14 +43,6 @@ public interface PerceptualAssociativeMemory extends FrameworkModule {
     }
 
     /**
-     * Adds {@link PamListener}.
-     * 
-     * @param pl
-     *            the listener
-     */
-    public void addPamListener(PamListener pl);
-
-    /**
      * Receives {@link CognitiveContentStructure} in the specified mode.
      * 
      * @param mode
@@ -54,7 +50,7 @@ public interface PerceptualAssociativeMemory extends FrameworkModule {
      * @param content
      *            the cognitive content to be received
      */
-    public void receive(ReceiveMode mode, CognitiveContentStructure content);
+    public void receive(ReceiveMode mode, CognitiveContentStructure<T> content);
 
     /**
      * Update associations in PAM based on the supplied
@@ -63,5 +59,5 @@ public interface PerceptualAssociativeMemory extends FrameworkModule {
      * @param content
      *            the cognitive content to be learned
      */
-    public void learn(CognitiveContentStructure content);
+    public void learn(CognitiveContentStructure<T> content);
 }
