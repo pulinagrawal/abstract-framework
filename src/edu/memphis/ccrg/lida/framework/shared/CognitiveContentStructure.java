@@ -8,6 +8,7 @@
 package edu.memphis.ccrg.lida.framework.shared;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import edu.memphis.ccrg.lida.framework.initialization.Initializable;
 
@@ -80,6 +81,14 @@ public interface CognitiveContentStructure extends Initializable {
      *         representation of this CognitiveContentStructure
      */
     public CognitiveContent getReducedRepresentation();
+
+    /**
+     * Returns an iterator over the {@code CognitiveContent} contained in this
+     * {@code CognitiveContentStructure}.
+     * 
+     * @return an {@link Iterator}
+     */
+    public Iterator<CognitiveContent> getIterator();
 
     /**
      * Decays the {@link CognitiveContent} contained in this
