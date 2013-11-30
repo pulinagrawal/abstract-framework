@@ -64,9 +64,11 @@ public class CoalitionImpl extends ActivatibleImpl implements Coalition {
      */
     public CoalitionImpl(CognitiveContentStructure ns, AttentionCodelet c) {
         this();
+       
+        if (ns != null) {
+            broadcastContent = ns.copy();
+        }
         
-        // TODO: Need to make a copy here
-        broadcastContent = ns;
         creatingAttentionCodelet = c;
         if (creatingAttentionCodelet != null) {
             updateActivation();
