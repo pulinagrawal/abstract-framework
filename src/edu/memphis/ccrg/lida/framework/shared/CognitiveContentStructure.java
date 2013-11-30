@@ -20,7 +20,7 @@ import edu.memphis.ccrg.lida.framework.initialization.Initializable;
  * @author Javier Snaider
  * 
  */
-public interface CognitiveContentStructure extends Initializable {
+public interface CognitiveContentStructure<T extends CognitiveContent> extends Initializable {
 
     /**
      * Adds {@link CognitiveContent} to this CognitiveContentStructure.
@@ -29,7 +29,7 @@ public interface CognitiveContentStructure extends Initializable {
      *            the {@link CognitiveContent} to add
      * @return the added {@link CognitiveContent}
      */
-    public CognitiveContent addContent(CognitiveContent content);
+    public T addContent(T content);
 
     /**
      * Adds the {@link CognitiveContent} contained in the supplied Collection to
@@ -39,7 +39,7 @@ public interface CognitiveContentStructure extends Initializable {
      *            a Collection containing the {@link CognitiveContent} to add
      * @return a Collection containing the added {@link CognitiveContent}
      */
-    public Collection<CognitiveContent> addContent(Collection<CognitiveContent> content);
+    public Collection<T> addContent(Collection<T> content);
 
     /**
      * Removes the specified {@link CognitiveContent} if present.
@@ -47,7 +47,7 @@ public interface CognitiveContentStructure extends Initializable {
      * @param content
      *            {@link CognitiveContent} to remove.
      */
-    public void removeContent(CognitiveContent content);
+    public void removeContent(T content);
 
     /**
      * Returns whether this CognitiveContentStructure contains the specified
@@ -57,7 +57,7 @@ public interface CognitiveContentStructure extends Initializable {
      *            {@link CognitiveContent} to be checked for.
      * @return true if contains {@link CognitiveContent} with the same id
      */
-    public boolean containsContent(CognitiveContent content);
+    public boolean containsContent(T content);
 
     /**
      * Merges specified CognitiveContentStructure into this one.
@@ -65,14 +65,14 @@ public interface CognitiveContentStructure extends Initializable {
      * @param cs
      *            CognitiveContentStructure
      */
-    public void mergeWith(CognitiveContentStructure cs);
+    public void mergeWith(CognitiveContentStructure<T> cs);
 
     /**
      * Returns a deep copy of this CognitiveContentStructure.
      * 
      * @return CognitiveContentStructure
      */
-    public CognitiveContentStructure copy();
+    public CognitiveContentStructure<T> copy();
 
     /**
      * Returns the reduced representation of this CognitiveContentStructure.
@@ -80,7 +80,7 @@ public interface CognitiveContentStructure extends Initializable {
      * @return the {@link CognitiveContent} that represents a reduced
      *         representation of this CognitiveContentStructure
      */
-    public CognitiveContent getReducedRepresentation();
+    public T getReducedRepresentation();
 
     /**
      * Returns an iterator over the {@code CognitiveContent} contained in this
@@ -88,7 +88,7 @@ public interface CognitiveContentStructure extends Initializable {
      * 
      * @return an {@link Iterator}
      */
-    public Iterator<CognitiveContent> getIterator();
+    public Iterator<T> getIterator();
 
     /**
      * Decays the {@link CognitiveContent} contained in this
@@ -98,5 +98,4 @@ public interface CognitiveContentStructure extends Initializable {
      *            the number of ticks to decay for.
      */
     public void decay(long ticks);
-
 }
