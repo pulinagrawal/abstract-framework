@@ -31,7 +31,7 @@ public interface Coalition extends Activatible {
      * 
      * @return The {@link CognitiveContentStructure} of the coalition
      */
-    public CognitiveContentStructure getContent();
+    public CognitiveContentStructure<?> getContent();
 
     /**
      * Returns the creating {@link AttentionCodelet} that created this coalition

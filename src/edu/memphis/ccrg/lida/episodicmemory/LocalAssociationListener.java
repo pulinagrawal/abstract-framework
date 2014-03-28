@@ -24,6 +24,6 @@ public interface LocalAssociationListener extends ModuleListener {
 	 *            The response generated from the Episodic Memory to a previous
 	 *            cue.
 	 */
-	public void receiveLocalAssociation(CognitiveContentStructure association);
+	public void receiveLocalAssociation(CognitiveContentStructure<?> association);
 
 }

@@ -28,7 +28,7 @@ public interface Translator {
 	 *            translated
 	 * @return the {@link CognitiveContentStructure} associated with the address
 	 */
-	public CognitiveContentStructure translate(BitVector v);
+	public CognitiveContentStructure<?> translate(BitVector v);
 
 	/**
 	 * Translates a {@link CognitiveContentStructure} into a {@link BitVector}.
@@ -38,6 +38,6 @@ public interface Translator {
 	 * @return a {@link BitVector} with the boolean address associated with the
 	 *         {@link CognitiveContentStructure}
 	 */
-	public BitVector translate(CognitiveContentStructure ns);
+	public BitVector translate(CognitiveContentStructure<?> ns);
 
 }

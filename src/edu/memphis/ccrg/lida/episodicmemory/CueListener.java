@@ -9,9 +9,10 @@ package edu.memphis.ccrg.lida.episodicmemory;
 
 import edu.memphis.ccrg.lida.framework.ModuleListener;
 import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
+import edu.memphis.ccrg.lida.workspace.Workspace;
 
 /**
- * Listens to cues from the {@link WorkspaceNS}. This interface is typically
+ * Listens to cues from the {@link Workspace}. This interface is typically
  * implemented by {@link EpisodicMemory} modules.
  * 
  * @author Ryan J. McCall
@@ -24,6 +25,6 @@ public interface CueListener extends ModuleListener {
 	 * @param cue
 	 *            a {@link CognitiveContentStructure} to cue {@link EpisodicMemory} with
 	 */
-	public void receiveCue(CognitiveContentStructure cue);
+	public void receiveCue(CognitiveContentStructure<?> cue);
 
 }

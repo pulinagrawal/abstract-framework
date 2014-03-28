@@ -37,7 +37,7 @@ public class CoalitionImpl extends ActivatibleImpl implements Coalition {
     /**
      * the contents of the coalition
      */
-    protected CognitiveContentStructure broadcastContent;
+    protected CognitiveContentStructure<?> broadcastContent;
 
     /**
      * the {@link AttentionCodelet} that created the coalition
@@ -62,7 +62,7 @@ public class CoalitionImpl extends ActivatibleImpl implements Coalition {
      *            The {@link AttentionCodelet} that created this Coalition
      * @see AttentionCodeletImpl
      */
-    public CoalitionImpl(CognitiveContentStructure ns, AttentionCodelet c) {
+    public CoalitionImpl(CognitiveContentStructure<?> ns, AttentionCodelet c) {
         this();
        
         if (ns != null) {
@@ -92,7 +92,7 @@ public class CoalitionImpl extends ActivatibleImpl implements Coalition {
     }
 
     @Override
-    public CognitiveContentStructure getContent() {
+    public CognitiveContentStructure<?> getContent() {
         return broadcastContent;
     }
 

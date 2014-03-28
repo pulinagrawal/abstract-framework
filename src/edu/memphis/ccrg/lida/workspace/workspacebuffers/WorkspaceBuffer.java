@@ -30,7 +30,7 @@ public interface WorkspaceBuffer extends FrameworkModule {
      *            optional parameters to specify what content is returned
      * @return {@link CognitiveContentStructure}
      */
-    public CognitiveContentStructure getBufferContent(Map<String, Object> params);
+    public CognitiveContentStructure<?> getBufferContent(Map<String, Object> params);
 
     /**
      * Adds specified content to this workspace buffer.
@@ -38,7 +38,7 @@ public interface WorkspaceBuffer extends FrameworkModule {
      * @param content
      *            {@link CognitiveContentStructure} to add
      */
-    public void addBufferContent(CognitiveContentStructure content);
+    public void addBufferContent(CognitiveContentStructure<?> content);
 
 }
 

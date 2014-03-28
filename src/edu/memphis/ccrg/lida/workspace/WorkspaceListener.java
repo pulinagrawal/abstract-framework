@@ -27,7 +27,7 @@ public interface WorkspaceListener extends ModuleListener {
      * @param content
      *            sent content
      */
-    public void receiveWorkspaceContent(ModuleName originatingBuffer, CognitiveContentStructure content);
+    public void receiveWorkspaceContent(ModuleName originatingBuffer, CognitiveContentStructure<?> content);
 
 }
 

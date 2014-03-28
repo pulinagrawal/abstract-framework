@@ -25,7 +25,7 @@ public interface PreafferenceListener {
 	 * @param deleteSet
 	 *            expected deletions in future percepts
 	 */
-	public void receivePreafference(CognitiveContentStructure addSet,
-			CognitiveContentStructure deleteSet);
+	public void receivePreafference(CognitiveContentStructure<?> addSet,
+			CognitiveContentStructure<?> deleteSet);
 
 }

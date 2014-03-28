@@ -111,7 +111,7 @@ public interface ProceduralMemory extends FrameworkModule {
      * @return true if the {@link Scheme} should be instantiated, false
      *         otherwise.
      */
-    public boolean shouldInstantiate(Scheme s, CognitiveContentStructure broadcast);
+    public boolean shouldInstantiate(Scheme s, CognitiveContentStructure<?> broadcast);
 
     /**
      * Instantiates specified {@link Scheme} .

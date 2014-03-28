@@ -18,6 +18,7 @@ import edu.memphis.ccrg.lida.framework.initialization.Initializable;
  * 
  * @author Sean Kugele
  * @author Javier Snaider
+ * @param <T> The type of {@link CognitiveContent} contained by specific structures. 
  * 
  */
 public interface CognitiveContentStructure<T extends CognitiveContent> extends Initializable {

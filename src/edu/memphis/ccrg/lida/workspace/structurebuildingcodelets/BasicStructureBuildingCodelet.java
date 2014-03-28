@@ -40,7 +40,7 @@ public class BasicStructureBuildingCodelet extends StructureBuildingCodeletImpl 
 		for (WorkspaceBuffer readableBuffer : readableBuffers.values()) {
 			if (bufferContainsSoughtContent(readableBuffer)) {
 				writableBuffer
-						.addBufferContent((CognitiveContentStructure) retrieveWorkspaceContent(readableBuffer));
+						.addBufferContent((CognitiveContentStructure<?>) retrieveWorkspaceContent(readableBuffer));
 			}
 		}
 		logger.log(Level.FINEST, "SB codelet {1} finishes one run.",
@@ -48,18 +48,16 @@ public class BasicStructureBuildingCodelet extends StructureBuildingCodeletImpl 
 	}
 
 	@Override
-    public CognitiveContentStructure retrieveWorkspaceContent(WorkspaceBuffer buffer) {
-		return (CognitiveContentStructure)buffer.getBufferContent(null);
+    public CognitiveContentStructure<?> retrieveWorkspaceContent(WorkspaceBuffer buffer) {
+		return (CognitiveContentStructure<?>)buffer.getBufferContent(null);
 	}
 
 	@Override
 	public boolean bufferContainsSoughtContent(WorkspaceBuffer buffer) {
-		CognitiveContentStructure ns = (CognitiveContentStructure) buffer.getBufferContent(null);
-		
-		// TODO: Need a Strategy for determining sought content
-		
-		logger.log(Level.FINEST, "SBcodelet {1} found sought content",
-				new Object[] { TaskManager.getCurrentTick(), this });
+//		CognitiveContentStructure<?> ns = (CognitiveContentStructure<?>) buffer.getBufferContent(null);		
+		// TODO: What is going on with this?
+//		logger.log(Level.FINEST, "SBcodelet {1} found sought content,
+//				new Object[] { TaskManager.getCurrentTick(), this });
 		return true;
 	}
 

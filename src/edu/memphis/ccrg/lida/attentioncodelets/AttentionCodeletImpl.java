@@ -85,7 +85,7 @@ public abstract class AttentionCodeletImpl extends CodeletImpl implements
 	@Override
 	protected void runThisFrameworkTask() {
 		if (bufferContainsSoughtContent(currentSituationalModel)) {
-			CognitiveContentStructure csmContent = retrieveWorkspaceContent(currentSituationalModel);
+			CognitiveContentStructure<?> csmContent = retrieveWorkspaceContent(currentSituationalModel);
 			if (csmContent == null) {
 				logger.log(Level.WARNING,
 							"Null WorkspaceContent returned in {1}. Coalition cannot be formed.",

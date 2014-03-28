@@ -9,10 +9,12 @@ package edu.memphis.ccrg.lida.framework.strategies;
 
 import java.util.Map;
 
+import edu.memphis.ccrg.lida.framework.factories.DefaultStrategyFactory;
+
 /**
  * A strategy pattern for exciting Activatibles or Learnables
  * 
- * Implementations should add themselves to {@link StrategyFactory} via the
+ * Implementations should add themselves to {@link DefaultStrategyFactory} via the
  * factoriesData.xml configuration file.
  * 
  * 

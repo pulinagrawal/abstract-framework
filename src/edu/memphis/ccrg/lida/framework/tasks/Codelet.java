@@ -24,13 +24,13 @@ public interface Codelet extends FrameworkTask {
 	/**
 	 * @return the sought content
 	 */
-	public CognitiveContentStructure getSoughtContent();
+	public CognitiveContentStructure<?> getSoughtContent();
 
 	/**
 	 * @param content
 	 *            the content the codelet looks for.
 	 */
-	public void setSoughtContent(CognitiveContentStructure content);
+	public void setSoughtContent(CognitiveContentStructure<?> content);
 
 	/**
 	 * Returns true if specified WorkspaceBuffer contains this codelet's sought
@@ -50,5 +50,5 @@ public interface Codelet extends FrameworkTask {
 	 *            the buffer
 	 * @return the workspace content
 	 */
-	public CognitiveContentStructure retrieveWorkspaceContent(WorkspaceBuffer buffer);
+	public CognitiveContentStructure<?> retrieveWorkspaceContent(WorkspaceBuffer buffer);
 }

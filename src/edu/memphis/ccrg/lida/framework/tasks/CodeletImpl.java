@@ -20,16 +20,16 @@ public abstract class CodeletImpl extends FrameworkTaskImpl implements Codelet {
     /**
      * Content which this codelet responds to.
      */
-    protected CognitiveContentStructure soughtContent;
+    protected CognitiveContentStructure<?> soughtContent;
 
     @Override
-    public CognitiveContentStructure getSoughtContent() {
+    public CognitiveContentStructure<?> getSoughtContent() {
         return soughtContent;
     }
 
     @Override
-    public void setSoughtContent(CognitiveContentStructure content) {
-        soughtContent = (CognitiveContentStructure) content;
+    public void setSoughtContent(CognitiveContentStructure<?> content) {
+        soughtContent = content;
     }
 }
 

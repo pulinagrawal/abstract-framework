@@ -24,6 +24,6 @@ public interface PamListener extends ModuleListener {
 	 * @param content
 	 *            a CognitiveContentStructure
 	 */
-	public void receivePercept(CognitiveContentStructure content);
+	public void receivePercept(CognitiveContentStructure<?> content);
 
 }

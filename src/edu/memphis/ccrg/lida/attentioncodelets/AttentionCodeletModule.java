@@ -164,8 +164,8 @@ public class AttentionCodeletModule extends FrameworkModuleImpl implements
 	}
 
 	@Override
-	public void receivePreafference(CognitiveContentStructure addSet,
-			CognitiveContentStructure deleteSet) {
+	public void receivePreafference(CognitiveContentStructure<?> addSet,
+			CognitiveContentStructure<?> deleteSet) {
 		// TODO Receive results from Action Selection and create Attention
 		// Codelets. We need
 		// to figure out how to create coalitions and detect that something was

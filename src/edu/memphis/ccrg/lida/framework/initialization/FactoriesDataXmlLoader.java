@@ -7,7 +7,6 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.initialization;
 
-import java.io.FileNotFoundException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
