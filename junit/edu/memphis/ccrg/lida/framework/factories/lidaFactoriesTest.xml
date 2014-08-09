@@ -10,7 +10,7 @@
 		<factoryConfig type="local">
 			<factoryObjects>
 				<factoryObject name="defaultExciteStrategy" default="true">
-					<type>edu.memphis.ccrg.lida.framework.strategies.ExciteStrategy
+					<type>edu.memphis.ccrg.lida.framework.strategies.LinearExciteStrategy
 					</type>
 					<impl>edu.memphis.ccrg.lida.framework.strategies.LinearExciteStrategy
 					</impl>
