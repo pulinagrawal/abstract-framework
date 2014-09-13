@@ -9,7 +9,7 @@
 		</factoryImpl>
 		<factoryConfig type="local">
 			<factoryObjects>
-				<factoryObject name="defaultExciteStrategy" default="true">
+				<factoryObject name="defaultExciteStrategy" context="singleton" default="true">
 					<type>edu.memphis.ccrg.lida.framework.strategies.LinearExciteStrategy
 					</type>
 					<impl>edu.memphis.ccrg.lida.framework.strategies.LinearExciteStrategy
@@ -19,7 +19,7 @@
 						<param name="flyweight" type="boolean">true</param>
 					</params>
 				</factoryObject>
-				<factoryObject name="defaultDecayStrategy" default="true">
+				<factoryObject name="defaultDecayStrategy" context="singleton" default="true">
 					<type>edu.memphis.ccrg.lida.framework.strategies.DecayStrategy
 					</type>
 					<impl>edu.memphis.ccrg.lida.framework.strategies.LinearDecayStrategy
@@ -29,7 +29,7 @@
 						<param name="flyweight" type="boolean">true</param>
 					</params>
 				</factoryObject>
-				<factoryObject name="slowExciteStrategy">
+				<factoryObject name="slowExciteStrategy" context="singleton">
 					<type>edu.memphis.ccrg.lida.framework.strategies.ExciteStrategy
 					</type>
 					<impl>edu.memphis.ccrg.lida.framework.strategies.LinearExciteStrategy
@@ -39,7 +39,7 @@
 						<param name="flyweight" type="boolean">true</param>
 					</params>
 				</factoryObject>
-				<factoryObject name="slowDecayStrategy">
+				<factoryObject name="slowDecayStrategy" context="singleton">
 					<type>edu.memphis.ccrg.lida.framework.strategies.DecayStrategy
 					</type>
 					<impl>edu.memphis.ccrg.lida.framework.strategies.LinearDecayStrategy
@@ -49,7 +49,7 @@
 						<param name="flyweight" type="boolean">true</param>
 					</params>
 				</factoryObject>
-				<factoryObject name="pamDefaultExciteStrategy">
+				<factoryObject name="pamDefaultExciteStrategy" context="singleton">
 					<type>edu.memphis.ccrg.lida.framework.strategies.ExciteStrategy
 					</type>
 					<impl>edu.memphis.ccrg.lida.framework.strategies.LinearExciteStrategy
@@ -59,7 +59,7 @@
 						<param name="flyweight" type="boolean">true</param>
 					</params>
 				</factoryObject>
-				<factoryObject name="pamDefaultDecayStrategy">
+				<factoryObject name="pamDefaultDecayStrategy" context="singleton">
 					<type>edu.memphis.ccrg.lida.framework.strategies.DecayStrategy
 					</type>
 					<impl>edu.memphis.ccrg.lida.framework.strategies.LinearDecayStrategy
@@ -69,7 +69,7 @@
 						<param name="flyweight" type="boolean">true</param>
 					</params>
 				</factoryObject>
-				<factoryObject name="noExciteStrategy">
+				<factoryObject name="noExciteStrategy" context="singleton">
 					<type>edu.memphis.ccrg.lida.framework.strategies.ExciteStrategy
 					</type>
 					<impl>edu.memphis.ccrg.lida.framework.strategies.NoExciteStrategy
@@ -79,7 +79,7 @@
 						<param name="flyweight" type="boolean">true</param>
 					</params>
 				</factoryObject>
-				<factoryObject name="noDecayStrategy">
+				<factoryObject name="noDecayStrategy" context="singleton">
 					<type>edu.memphis.ccrg.lida.framework.strategies.DecayStrategy
 					</type>
 					<impl>edu.memphis.ccrg.lida.framework.strategies.NoDecayStrategy
