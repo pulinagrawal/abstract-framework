@@ -32,7 +32,7 @@ public class UpdateCsmBackgroundTask extends FrameworkTaskImpl {
 	private WorkspaceBuffer csm;
 
 	@Override
-	public void setAssociatedModule(FrameworkModule module, String moduleUsage) {
+	public void setAssociatedModule(FrameworkModule module) {
 		if (module instanceof Workspace) {
 			perceptualBuffer = (WorkspaceBuffer) module
 					.getSubmodule(ModuleName.PerceptualBuffer);

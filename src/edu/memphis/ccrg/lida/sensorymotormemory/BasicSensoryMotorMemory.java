@@ -80,7 +80,7 @@ public class BasicSensoryMotorMemory extends FrameworkModuleImpl implements
 	}
 
 	@Override
-	public void setAssociatedModule(FrameworkModule module, String moduleUsage) {
+	public void setAssociatedModule(FrameworkModule module) {
 		if (module instanceof Environment) {
 			environment = (Environment) module;
 		} else {

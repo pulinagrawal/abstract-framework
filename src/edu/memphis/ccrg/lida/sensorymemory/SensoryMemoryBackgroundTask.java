@@ -37,7 +37,7 @@ public class SensoryMemoryBackgroundTask extends FrameworkTaskImpl {
 	 *            It is not used here
 	 */
 	@Override
-	public void setAssociatedModule(FrameworkModule module, String moduleUsage) {
+	public void setAssociatedModule(FrameworkModule module) {
 		if (module instanceof SensoryMemory) {
 			sm = (SensoryMemory) module;
 		} else {

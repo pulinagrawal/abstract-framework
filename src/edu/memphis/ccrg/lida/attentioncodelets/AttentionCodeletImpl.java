@@ -67,7 +67,7 @@ public abstract class AttentionCodeletImpl extends CodeletImpl implements
 	}
 
 	@Override
-	public void setAssociatedModule(FrameworkModule module, String usage) {
+	public void setAssociatedModule(FrameworkModule module) {
 		if (module instanceof WorkspaceBuffer) {
 			currentSituationalModel = (WorkspaceBuffer) module;
 		} else if (module instanceof GlobalWorkspace) {

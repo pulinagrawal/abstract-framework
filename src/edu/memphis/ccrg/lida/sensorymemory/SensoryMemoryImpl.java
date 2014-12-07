@@ -67,7 +67,7 @@ public abstract class SensoryMemoryImpl extends FrameworkModuleImpl implements S
     }
 
     @Override
-    public void setAssociatedModule(FrameworkModule m, String usage) {
+    public void setAssociatedModule(FrameworkModule m) {
         if (m instanceof Environment) {
             environment = (Environment) m;
         } else {

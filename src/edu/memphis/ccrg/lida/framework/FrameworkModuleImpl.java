@@ -166,9 +166,13 @@ public abstract class FrameworkModuleImpl extends InitializableImpl implements
 	}
 
 	@Override
-	public void setAssociatedModule(FrameworkModule module, String moduleUsage) {
+	public void setAssociatedModule(FrameworkModule module) {
 	}
-
+	
+	@Override
+    public void initAssociatedModules(Map<ModuleName, FrameworkModule> moduleMap) {
+	}
+	
 	/**
 	 * Override this method to add a listener to the module
 	 * 
