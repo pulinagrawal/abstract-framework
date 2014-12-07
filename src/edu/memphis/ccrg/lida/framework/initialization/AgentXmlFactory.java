@@ -111,11 +111,11 @@ public class AgentXmlFactory implements AgentFactory {
 		}
 
 		tm = getTaskManager(docEle);
-		logger.log(Level.INFO, "Finished obtaining TaskManager\n", 0L);
+		logger.log(Level.INFO, "Finished obtaining TaskManager", 0L);
 		agent = new AgentImpl(tm);
 
 		taskSpawners = getTaskSpawners(docEle, tm);
-		logger.log(Level.INFO, "Finished creating TaskSpawners\n", 0L);
+		logger.log(Level.INFO, "Finished creating TaskSpawners", 0L);
 
 		modules = getModules(docEle, toAssociate, toInitialize, taskSpawners,
 				toRun);
@@ -123,22 +123,25 @@ public class AgentXmlFactory implements AgentFactory {
 			agent.addSubModule(frameworkModule);
 		}
 		logger
-				.log(Level.INFO, "Finished creating modules and submodules\n",
+				.log(Level.INFO, "Finished creating modules and submodules",
 						0L);
 
 		getListeners(docEle, agent);
-		logger.log(Level.INFO, "Finished setting up listeners\n", 0L);
+		logger.log(Level.INFO, "Finished setting up listeners", 0L);
 
 		associateModules(toAssociate, agent);
-		logger.log(Level.INFO, "Finished associating modules\n", 0L);
+		logger.log(Level.INFO, "Finished associating modules", 0L);
 
 		initializeModules(agent, toInitialize);
-		logger.log(Level.INFO, "Finished initializing modules\n", 0L);
+		logger.log(Level.INFO, "Finished initializing modules", 0L);
 
 		Map<ModuleName, FrameworkModule> modulesMap = new HashMap<ModuleName, FrameworkModule>();
 		getModuleMap(agent, modulesMap);
+	
+		GlobalInitializer.getInstance().setAttribute("modulesMap", modulesMap);
+		
 		initializeTasks(modulesMap, toRun);
-		logger.log(Level.INFO, "Finished initializing tasks\n", 0L);
+		logger.log(Level.INFO, "Finished initializing tasks", 0L);
 
 		agent.init();
 
@@ -292,11 +295,11 @@ public class AgentXmlFactory implements AgentFactory {
 			ts = (TaskSpawner) Class.forName(className).newInstance();
 		} catch (ClassNotFoundException e) {
 			logger.log(Level.SEVERE, "Module class name: " + className
-					+ " is not found.  Check TaskSpawner class name.\n", 0L);
+					+ " is not found.  Check TaskSpawner class name.", 0L);
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Exception \"" + e.toString()
 					+ "\" occurred during creation of object of class "
-					+ className + "\n", 0L);
+					+ className, 0L);
 		}
 		if (ts == null) {
 			return;
@@ -388,11 +391,11 @@ public class AgentXmlFactory implements AgentFactory {
 		} catch (Exception e) {
 			if (e instanceof ClassNotFoundException) {
 				logger.log(Level.SEVERE, "Module class name: " + className
-						+ " is not valid.  Check module class name.\n", 0L);
+						+ " is not valid.  Check module class name.", 0L);
 			} else {
 				logger.log(Level.SEVERE,
 						"Exception occurred during creation of object of class "
-								+ className + "\n" + e + "\n", 0L);
+								+ className + e, 0L);
 				e.printStackTrace();
 			}
 			return null;
@@ -694,11 +697,7 @@ public class AgentXmlFactory implements AgentFactory {
 			}
 			FrameworkModule module = topModule.getSubmodule(moduleName);
 			if (module != null) {
-				String function = ModuleUsage.NOT_SPECIFIED;
-				if (vals[2] != null) {
-					function = (String) vals[2];
-				}
-				initializable.setAssociatedModule(module, function);
+				initializable.setAssociatedModule(module);
 			} else {
 				logger.log(Level.SEVERE, "Could not obtain " + module
 						+ ".  Module will NOT be associated to "
@@ -733,11 +732,11 @@ public class AgentXmlFactory implements AgentFactory {
 			} catch (ClassNotFoundException e) {
 				logger.log(Level.SEVERE, "Initializer class name: "
 						+ initializerClassName
-						+ " not found.  Check class name.\n", 0L);
+						+ " not found.  Check class name.", 0L);
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "Exception \"" + e.toString()
 						+ "\" occurred during creation of object of class "
-						+ initializerClassName + "\n", 0L);
+						+ initializerClassName, 0L);
 				return;
 			}
 
@@ -746,7 +745,7 @@ public class AgentXmlFactory implements AgentFactory {
 					logger
 							.log(
 									Level.INFO,
-									"********Initializing {0} module using initializer {1}",
+									"Initializing {0} module using initializer {1}.",
 									new Object[] { moduleToInitialize,
 											initializer.getClass() });
 					initializer.initModule(moduleToInitialize, topModule,
@@ -775,13 +774,18 @@ public class AgentXmlFactory implements AgentFactory {
 	static void initializeTasks(Map<ModuleName, FrameworkModule> moduleMap,
 			List<TaskData> toRun) {
 		FrameworkTaskFactory factory = factoryManager.getFactory(FrameworkTaskFactory.class);
+
+		// TODO: Add error handling for factory lookup failure
+		if (factory == null) {
+		    return;
+		}
+	
 		for (TaskData td : toRun) {
-			FrameworkTask task = factory.getFrameworkTask(td.tasktype,
-					td.params, moduleMap);
+			FrameworkTask task = factory.getFrameworkTask(td.tasktype, FrameworkTask.class);
 			if (task != null) {
-				if (td.ticksPerRun > 0) {// TODO remove?
-					task.setTicksPerRun(td.ticksPerRun);
-				}
+				task.setTicksPerRun(td.ticksPerRun);
+				task.initAssociatedModules(moduleMap);
+				
 				td.taskSpawner.addTask(task);
 			} else {
 				logger.log(Level.WARNING, "unable to run task: {1}",
