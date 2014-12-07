@@ -59,13 +59,17 @@ public class LidaFactoryObject {
     public boolean isDefault() {
         return isDefault;
     }
-    
+
     public FactoryObjectContextType getObjectContextType() {
         return objectContextType;
     }
 
     private static List<LidaParam> transformParams(List<Param> params) {
         List<LidaParam> resultList = new ArrayList<LidaParam>();
+
+        if (params == null) {
+            return resultList;
+        }
 
         for (Param p : params) {
             if (p != null) {
