@@ -54,7 +54,7 @@ public class InitializableImpl implements Initializable {
 					logger
 							.log(
 									Level.WARNING,
-									"Parameter with name {1} has value null\nUsing default parameter value",
+									"Parameter with name {1} has value null.  Using default parameter value",
 									new Object[] {
 											TaskManager.getCurrentTick(), name });
 				} else {
@@ -77,9 +77,9 @@ public class InitializableImpl implements Initializable {
 			} else {
 				logger
 						.log(
-								Level.WARNING,
-								"Cannot find parameter with name: \"{1}\" for Initializable: \"{2}\". "
-										+ "\nUsing default parameter value. If this is an error check the parameter name in the configuration files",
+								Level.FINE,
+								"Cannot find parameter with name: \"{1}\" for Initializable: \"{2}\". " 
+										+ "Using default parameter value. If this is an error check the parameter name in the configuration files.",
 								new Object[] { TaskManager.getCurrentTick(),
 										name, toString() });
 			}
