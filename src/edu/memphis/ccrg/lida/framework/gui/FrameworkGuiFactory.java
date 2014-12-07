@@ -76,7 +76,7 @@ public class FrameworkGuiFactory {
                     properties = new Properties();
                 }
                 FrameworkGuiController controller = new FrameworkGuiControllerImpl(agent, properties);
-                logger.log(Level.INFO, "GUI Controller created\n", 0L);
+                logger.log(Level.INFO, "GUI Controller created", 0L);
 
                 String refreshRateStr = systemProperties.getProperty("lida.gui.refreshRate", "");
                 try {
@@ -92,7 +92,7 @@ public class FrameworkGuiFactory {
 
                 FrameworkGui frameworkGui = new FrameworkGui(agent, controller, guiDef);
                 frameworkGui.setVisible(true);
-                logger.log(Level.INFO, "FrameworkGui started\n", 0L);
+                logger.log(Level.INFO, "FrameworkGui started", 0L);
             }
         });
     }
