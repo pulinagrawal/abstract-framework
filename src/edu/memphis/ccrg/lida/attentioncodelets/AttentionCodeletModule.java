@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import edu.memphis.ccrg.lida.actionselection.PreafferenceListener;
-import edu.memphis.ccrg.lida.framework.AttentionCodeletManagerModule;
 import edu.memphis.ccrg.lida.framework.FrameworkModule;
 import edu.memphis.ccrg.lida.framework.FrameworkModuleImpl;
 import edu.memphis.ccrg.lida.framework.ModuleName;
@@ -21,7 +20,6 @@ import edu.memphis.ccrg.lida.framework.factories.DefaultFactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.FactoryManager;
 import edu.memphis.ccrg.lida.framework.factories.FrameworkTaskFactory;
 import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
-import edu.memphis.ccrg.lida.framework.tasks.Codelet;
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
 import edu.memphis.ccrg.lida.globalworkspace.BroadcastListener;
 import edu.memphis.ccrg.lida.globalworkspace.Coalition;
@@ -36,7 +34,7 @@ import edu.memphis.ccrg.lida.workspace.Workspace;
  * 
  */
 public class AttentionCodeletModule extends FrameworkModuleImpl implements BroadcastListener,
-        PreafferenceListener, AttentionCodeletManagerModule {
+        PreafferenceListener {
 
     private static final Logger logger = Logger.getLogger(AttentionCodeletModule.class
             .getCanonicalName());
@@ -99,7 +97,6 @@ public class AttentionCodeletModule extends FrameworkModuleImpl implements Broad
         }
     }
 
-    @Override
     public void setDefaultCodeletType(String type) {
         if (taskFactory.containsTaskType(type)) {
             defaultCodeletType = type;
@@ -115,22 +112,18 @@ public class AttentionCodeletModule extends FrameworkModuleImpl implements Broad
         learn(coalition);
     }
 
-    @Override
     public AttentionCodelet getDefaultCodelet(Map<String, Object> params) {
         return getCodelet(defaultCodeletType, params);
     }
 
-    @Override
     public AttentionCodelet getDefaultCodelet() {
         return getCodelet(defaultCodeletType, null);
     }
 
-    @Override
     public AttentionCodelet getCodelet(String type) {
         return getCodelet(type, null);
     }
 
-    @Override
     public AttentionCodelet getCodelet(String type, Map<String, Object> params) {
         /*
          * AttentionCodelet codelet = (AttentionCodelet)
@@ -149,7 +142,6 @@ public class AttentionCodeletModule extends FrameworkModuleImpl implements Broad
         return codelet;
     }
 
-    @Override
     public void addCodelet(AttentionCodelet codelet) {
         if (codelet instanceof AttentionCodelet) {
             taskSpawner.addTask(codelet);
