@@ -27,14 +27,14 @@ import edu.memphis.ccrg.lida.framework.shared.ConcurrentHashSet;
  */
 public class TaskSpawnerImpl extends InitializableImpl implements TaskSpawner {
 
-	private static final Logger logger = Logger.getLogger(TaskSpawnerImpl.class
+	protected static final Logger logger = Logger.getLogger(TaskSpawnerImpl.class
 			.getCanonicalName());
 	/*
 	 * The tasks currently controlled by this TaskSpawner.
 	 */
-	private Set<FrameworkTask> controlledTasks = new ConcurrentHashSet<FrameworkTask>();
+	protected Set<FrameworkTask> controlledTasks = new ConcurrentHashSet<FrameworkTask>();
 
-	private TaskManager taskManager;
+	protected TaskManager taskManager;
 
 	/**
 	 * This default constructor is used by the {@link AgentXmlFactory}.
@@ -89,7 +89,8 @@ public class TaskSpawnerImpl extends InitializableImpl implements TaskSpawner {
 	/*
 	 * Schedule the FrameworkTask to be executed. Sets task status to RUNNING.
 	 */
-	private void runTask(FrameworkTask task) {
+	@Override
+	public void runTask(FrameworkTask task) {
 		logger.log(Level.FINEST, "Running task {1}", new Object[] {
 				TaskManager.getCurrentTick(), task });
 		task.setTaskStatus(TaskStatus.RUNNING);
@@ -128,7 +129,7 @@ public class TaskSpawnerImpl extends InitializableImpl implements TaskSpawner {
 	 * or FINISHED or CANCELLED This method is called to remove the task from
 	 * this TaskSpawner.
 	 */
-	private void removeTask(FrameworkTask task) {
+	protected void removeTask(FrameworkTask task) {
 		logger.log(Level.FINEST, "Removing task {1}", new Object[] {
 				TaskManager.getCurrentTick(), task });
 		controlledTasks.remove(task);

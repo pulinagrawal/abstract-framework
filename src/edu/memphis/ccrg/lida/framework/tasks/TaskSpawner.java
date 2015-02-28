@@ -22,80 +22,87 @@ import edu.memphis.ccrg.lida.framework.initialization.Initializable;
  */
 public interface TaskSpawner extends Initializable {
 
-	/**
-	 * Set the TaskManager this TaskSpawner will use to actually run the tasks.
-	 * 
-	 * @param tm
-	 *            the {@link TaskManager} of the system.
-	 */
-	public void setTaskManager(TaskManager tm);
+    /**
+     * Set the TaskManager this TaskSpawner will use to actually run the tasks.
+     * 
+     * @param tm
+     *            the {@link TaskManager} of the system.
+     */
+    public void setTaskManager(TaskManager tm);
 
-	/**
-	 * Adds and runs supplied FrameworkTask.
-	 * 
-	 * @param task
-	 *            the task to add.
-	 */
-	public void addTask(FrameworkTask task);
+    /**
+     * Adds and runs supplied FrameworkTask.
+     * 
+     * @param task
+     *            the task to add.
+     */
+    public void addTask(FrameworkTask task);
 
-	/**
-	 * Adds and runs supplied FrameworkTasks.
-	 * 
-	 * @param tasks
-	 *            a collection of tasks to be run.
-	 */
-	public void addTasks(Collection<? extends FrameworkTask> tasks);
+    /**
+     * Adds and runs supplied FrameworkTasks.
+     * 
+     * @param tasks
+     *            a collection of tasks to be run.
+     */
+    public void addTasks(Collection<? extends FrameworkTask> tasks);
 
-	/**
-	 * This method receives a task that has finished. TaskSpawners can choose
-	 * what to do with the FrameworkTask each time it finishes running.
-	 * Generally the FrameworkTask's {@link TaskStatus} determines this action.
-	 * 
-	 * @param task
-	 *            finished {@link FrameworkTask}
-	 */
-	public void receiveFinishedTask(FrameworkTask task);
+    /**
+     * This method receives a task that has finished. TaskSpawners can choose
+     * what to do with the FrameworkTask each time it finishes running.
+     * Generally the FrameworkTask's {@link TaskStatus} determines this action.
+     * 
+     * @param task
+     *            finished {@link FrameworkTask}
+     */
+    public void receiveFinishedTask(FrameworkTask task);
 
-	/**
-	 * Cancels specified task if it exists in this {@link TaskSpawner} Task is
-	 * removed from {@link TaskSpawner} and canceled in the {@link TaskManager}.
-	 * This is only possible if the tick for which the task is scheduled has not
-	 * been reached.
-	 * 
-	 * @param task
-	 *            The task to cancel.
-	 * @see TaskManager#cancelTask(FrameworkTask)
-	 * @return true if the task was canceled, false otherwise
-	 */
-	public boolean cancelTask(FrameworkTask task);
+    /**
+     * Cancels specified task if it exists in this {@link TaskSpawner} Task is
+     * removed from {@link TaskSpawner} and canceled in the {@link TaskManager}.
+     * This is only possible if the tick for which the task is scheduled has not
+     * been reached.
+     * 
+     * @param task
+     *            The task to cancel.
+     * @see TaskManager#cancelTask(FrameworkTask)
+     * @return true if the task was canceled, false otherwise
+     */
+    public boolean cancelTask(FrameworkTask task);
 
-	/**
-	 * Returns whether this TaskSpawner manages this task.
-	 * 
-	 * @param t
-	 *            a FrameworkTask
-	 * @return true if this {@link TaskSpawner} contains a task with task's id
-	 */
-	public boolean containsTask(FrameworkTask t);
+    /**
+     * Returns whether this TaskSpawner manages this task.
+     * 
+     * @param t
+     *            a FrameworkTask
+     * @return true if this {@link TaskSpawner} contains a task with task's id
+     */
+    public boolean containsTask(FrameworkTask t);
 
-	/**
-	 * Returns a {@link UnmodifiableCollection} that contains the FrameworkTasks
-	 * in this TaskSpawner. Tasks' TaskStatus may or may not be running. Use
-	 * {@link #getTasks()} instead.
-	 * 
-	 * @deprecated The returned tasks may not have {@link TaskStatus#RUNNING}.
-	 *             Replaced by {@link #getTasks()}.
-	 * @return collection of running tasks.
-	 */
-	@Deprecated
-	public Collection<FrameworkTask> getRunningTasks();
+    /**
+     * Returns a {@link UnmodifiableCollection} that contains the FrameworkTasks
+     * in this TaskSpawner. Tasks' TaskStatus may or may not be running. Use
+     * {@link #getTasks()} instead.
+     * 
+     * @deprecated The returned tasks may not have {@link TaskStatus#RUNNING}.
+     *             Replaced by {@link #getTasks()}.
+     * @return collection of running tasks.
+     */
+    @Deprecated
+    public Collection<FrameworkTask> getRunningTasks();
 
-	/**
-	 * Returns the {@link FrameworkTask} objects controlled by this TaskSpawner.
-	 * 
-	 * @return a {@link Collection} FrameworkTasks.
-	 */
-	public Collection<FrameworkTask> getTasks();
+    /**
+     * Returns the {@link FrameworkTask} objects controlled by this TaskSpawner.
+     * 
+     * @return a {@link Collection} FrameworkTasks.
+     */
+    public Collection<FrameworkTask> getTasks();
+
+    /**
+     * Schedules a single, non-recurring execution of a {@link FrameworkTask}.
+     * 
+     * @param t
+     *            a FrameworkTask
+     */
+    public void runTask(FrameworkTask t);
 
 }
-
