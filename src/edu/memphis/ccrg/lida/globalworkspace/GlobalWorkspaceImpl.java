@@ -96,7 +96,7 @@ public class GlobalWorkspaceImpl extends FrameworkModuleImpl implements
 		coalitionDecayStrategy = factory
 				.getStrategy(coalitionDecayStrategyName, DecayStrategy.class);
 		if (coalitionDecayStrategy == null) {
-			coalitionDecayStrategy = factory.getStrategy("default", DecayStrategy.class);
+			coalitionDecayStrategy = factory.getStrategy(DecayStrategy.class);
 			logger.log(Level.WARNING,
 					"failed to obtain decay strategy {0}, using default",
 					coalitionDecayStrategyName);
