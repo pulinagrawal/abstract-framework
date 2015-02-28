@@ -396,6 +396,11 @@ public class DefaultFactoryManager implements FactoryManager {
             } else {
                 for (String dependency : dependencies) {
                     LidaFactoryDef dependDef = factoryAliasMap.get(dependency);
+                    
+                    if (dependDef == null) {
+                        continue;
+                    }
+                    
                     if (hasCircularDependency(dependDef, predecessors)) {
                         return true;
                     }
