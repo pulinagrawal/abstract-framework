@@ -10,8 +10,7 @@
  */
 package edu.memphis.ccrg.lida.framework.tasks;
 
-import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
-import edu.memphis.ccrg.lida.workspace.workspacebuffers.WorkspaceBuffer;
+import edu.memphis.ccrg.lida.framework.shared.RefractoryPeriod;
 
 /**
  * A task that represents a demon-like processor.
@@ -19,36 +18,6 @@ import edu.memphis.ccrg.lida.workspace.workspacebuffers.WorkspaceBuffer;
  * @author Javier Snaider
  * @author Ryan J. McCall
  */
-public interface Codelet extends FrameworkTask {
+public interface Codelet extends FrameworkTask, RefractoryPeriod {
 
-	/**
-	 * @return the sought content
-	 */
-	public CognitiveContentStructure<?> getSoughtContent();
-
-	/**
-	 * @param content
-	 *            the content the codelet looks for.
-	 */
-	public void setSoughtContent(CognitiveContentStructure<?> content);
-
-	/**
-	 * Returns true if specified WorkspaceBuffer contains this codelet's sought
-	 * content.
-	 * 
-	 * @param buffer
-	 *            the WorkspaceBuffer to be checked for content
-	 * @return true, if successful
-	 */
-	public boolean bufferContainsSoughtContent(WorkspaceBuffer buffer);
-
-	/**
-	 * Returns sought content and related content from specified
-	 * WorkspaceBuffer.
-	 * 
-	 * @param buffer
-	 *            the buffer
-	 * @return the workspace content
-	 */
-	public CognitiveContentStructure<?> retrieveWorkspaceContent(WorkspaceBuffer buffer);
 }
