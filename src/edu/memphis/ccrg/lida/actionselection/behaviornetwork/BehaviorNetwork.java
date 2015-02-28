@@ -57,7 +57,7 @@ public class BehaviorNetwork extends FrameworkModuleImpl implements
 	private static final double DEFAULT_PREDECESSOR_EXCITATION_FACTOR = 0.1;
 	private static final double DEFAULT_CONFLICTOR_EXCITATION_FACTOR = 0.04;
 	private static final double DEFAULT_CONTEXT_SATISFACTION_THRESHOLD = 0.0;
-	private static final String DEFAULT_CANDIDATE_THRESHOLD_DECAY = "default";
+	private static final String DEFAULT_CANDIDATE_THRESHOLD_DECAY = "defaultDecayStrategy";
 	private static final String DEFAULT_BEHAVIOR_DECAY_NAME = "behaviorDecay";
 
 	private static final FactoryManager factoryManager = DefaultFactoryManager.getInstance();

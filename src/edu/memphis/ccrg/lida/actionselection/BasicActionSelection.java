@@ -67,7 +67,7 @@ public class BasicActionSelection extends FrameworkModuleImpl implements
 	private static final double DEFAULT_THRESHOLD_DECAY_RATE = 0.1;
 	private double thresholdDecayRate;
 	
-    private static final String DEFAULT_BEHAVIOR_DECAY = "default";
+    private static final String DEFAULT_BEHAVIOR_DECAY = "defaultDecayStrategy";
     
 	/**
 	 * Default constructor
