@@ -7,21 +7,21 @@
  *******************************************************************************/
 package edu.memphis.ccrg.lida.framework.factories;
 
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.w3c.dom.Element;
-
 import edu.memphis.ccrg.lida.framework.FrameworkModule;
 import edu.memphis.ccrg.lida.framework.ModuleName;
-import edu.memphis.ccrg.lida.framework.initialization.FrameworkTaskDef;
+import edu.memphis.ccrg.lida.framework.initialization.GlobalInitializer;
 import edu.memphis.ccrg.lida.framework.initialization.InitializableImpl;
-import edu.memphis.ccrg.lida.framework.initialization.XmlUtils;
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryDef;
 import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaFactoryObject;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.LidaParam;
+import edu.memphis.ccrg.lida.framework.initialization.config.xml.schema.generated.lidafactories.FactoryObjectContextType;
 import edu.memphis.ccrg.lida.framework.tasks.FrameworkTask;
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
 
@@ -31,89 +31,100 @@ import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
  * @author Sean Kugele
  * 
  */
-// TODO: This factory needs to be overhauled to use the same style
-// interface as the Strategy factory; i.e., lookup by type + interface class.
 public class DefaultFrameworkTaskFactory extends InitializableImpl implements
         FrameworkTaskFactory {
     private static final Logger logger = Logger.getLogger(DefaultFrameworkTaskFactory.class
             .getCanonicalName());
 
-    /*
-     * Map of between FrameworkTask types and the FrameworkTaskDef objects that
+    /**
+     * Map of between FrameworkTask types and the FrameworkTask objects that
      * define them
      */
-    private Map<String, FrameworkTaskDef> tasks = new HashMap<String, FrameworkTaskDef>();
+    protected final Map<String, FrameworkTask> tasks = new HashMap<String, FrameworkTask>();
+
+    /**
+     * FrameworkTasks that were registered as defaults. This map is used when a
+     * task "name" is not provided to getFrameworkTask.
+     */
+    protected final Map<Class<? extends FrameworkTask>, String> defaultTasks = new HashMap<Class<? extends FrameworkTask>, String>();
+
+    /**
+     * Map to determine if the retrieved instance will be a singleton or
+     * allocated its own new memory location
+     */
+    protected final Map<String, FactoryObjectContextType> contexts = new HashMap<String, FactoryObjectContextType>();
 
     // Package private. Should be instantiated in the FactoryManager
     DefaultFrameworkTaskFactory() {
-        
+
     }
 
     @Override
-    public FrameworkTask getFrameworkTask(String type) {
-        return getFrameworkTask(type, null);
-    }
-
-    @Override
-    public FrameworkTask getFrameworkTask(String taskType, Map<String, ? extends Object> params) {
-        return getFrameworkTask(taskType, params, null);
-    }
-
-    @Override
-    // TODO: Can this stuff be configured in the XML file, or does it need to be dynamic?
-    public FrameworkTask getFrameworkTask(String taskType,
-            Map<String, ? extends Object> params, Map<ModuleName, FrameworkModule> modules) {
-        FrameworkTask task = null;
-        try {
-            FrameworkTaskDef taskDef = tasks.get(taskType);
-            if (taskDef == null) {
-                logger.log(Level.WARNING, "Factory does not contain FrameworkTask type {1}",
-                        new Object[] { TaskManager.getCurrentTick(), taskType });
-                return null;
-            }
-
-            String className = taskDef.getClassName();
-            task = (FrameworkTask) Class.forName(className).newInstance();
-            task.setTicksPerRun(taskDef.getTicksPerRun());
-
-            // Associate specified modules to task
-            if (modules != null) {
-                Map<ModuleName, String> associatedModules = taskDef.getAssociatedModules();
-                for (ModuleName mName : associatedModules.keySet()) {
-                    FrameworkModule module = modules.get(mName);
-                    if (module != null) {
-                        task.setAssociatedModule(module, associatedModules.get(mName));
-                    } else {
-                        logger.log(
-                                Level.WARNING,
-                                "Could not associate module {1} to FrameworkTask {2}. Module was not found in 'modules' map",
-                                new Object[] { TaskManager.getCurrentTick(), mName, task });
-                    }
-                }
-            }
-
-            // Call task's init with parameters
-            Map<String, Object> mergedParams = new HashMap<String, Object>();
-            Map<String, Object> defParams = taskDef.getParams();
-            if (defParams != null) {
-                mergedParams.putAll(defParams);
-            }
-            if (params != null) { // Order matters! Overwrite defParams with
-                                  // argument parameters
-                mergedParams.putAll(params);
-            }
-            task.init(mergedParams);
-        } catch (InstantiationException e) {
-            logger.log(Level.WARNING, "{1} creating FrameworkTask of type {2}", new Object[] {
-                    TaskManager.getCurrentTick(), e, taskType });
-        } catch (IllegalAccessException e) {
-            logger.log(Level.WARNING, "{1} creating FrameworkTask of type {2}", new Object[] {
-                    TaskManager.getCurrentTick(), e, taskType });
-        } catch (ClassNotFoundException e) {
-            logger.log(Level.WARNING, "{1} creating FrameworkTask of type {2}", new Object[] {
-                    TaskManager.getCurrentTick(), e, taskType });
+    public <T extends FrameworkTask> T getFrameworkTask(Class<T> type) {
+        if (type == null) {
+            return null;
         }
-        return task;
+
+        String name = defaultTasks.get(type);
+
+        if (name == null) {
+            logger.log(Level.WARNING,
+                    "FrameworkTaskFactory does not contain a default strategy for type {1}",
+                    new Object[] { TaskManager.getCurrentTick(), type });
+
+            return null;
+        }
+
+        return getFrameworkTask(name, type);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends FrameworkTask> T getFrameworkTask(String name, Class<T> type) {
+        if (!tasks.containsKey(name)) {
+            logger.log(Level.WARNING,
+                    "Factory does not contain a framework task with name {1} and type {2}",
+                    new Object[] { TaskManager.getCurrentTick(), name, type });
+
+            return null;
+        }
+
+        return (T) createTask(name, type);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends FrameworkTask> T createTask(String name, Class<T> type) {
+        FrameworkTask task = tasks.get(name);
+
+        FactoryObjectContextType createMode = contexts.get(name);
+        if (FactoryObjectContextType.SINGLETON == createMode) {
+            return (T) task;
+        }
+
+        try {
+            Class<?> clazz = task.getClass();
+            Constructor<T> constructor = (Constructor<T>) clazz.getDeclaredConstructor();
+
+            FrameworkTask newTask = constructor.newInstance();
+            newTask.init(task.getParameters());
+
+            task = newTask;
+
+        } catch (Exception e) {
+            logger.log(Level.WARNING,
+                    "Unable to create FrameworkTask with name {1} and type {2}: {3}",
+                    new Object[] { TaskManager.getCurrentTick(), name, type, e });
+            task = null;
+        }
+
+        if (task != null) {
+            GlobalInitializer initializer = GlobalInitializer.getInstance();
+            Map<ModuleName, FrameworkModule> moduleMap = (Map<ModuleName, FrameworkModule>) initializer
+                    .getAttribute("modulesMap");
+            task.initAssociatedModules(moduleMap);
+        }
+
+        return (T) task;
     }
 
     @Override
@@ -132,72 +143,95 @@ public class DefaultFrameworkTaskFactory extends InitializableImpl implements
      */
     private class Initializer extends AbstractFactoryInitializer<FrameworkTaskFactory> {
 
+        private final List<LidaParam> params;
+        private final List<LidaFactoryObject> objects;
+
         public Initializer(LidaFactoryDef factoryDef) {
             super(DefaultFrameworkTaskFactory.this, factoryDef);
+
+            params = super.getFactoryParams();
+            objects = super.getFactoryObjects();
         }
 
         @Override
         public void loadData() {
-            
+            loadFactoryParams();
+            loadFactoryObjects();
         }
 
-//        private void fillTasks(Map<String, LidaFactoryObject> tasks) {
-//            for (FrameworkTaskDef cd : tasks.values()) {
-//                factory.addFrameworkTaskType(cd);
-//            }
-//        }
-//
-//        private Map<String, FrameworkTaskDef> getTasks(Element element) {
-//            Map<String, FrameworkTaskDef> tasks = new HashMap<String, FrameworkTaskDef>();
-//            List<Element> list = XmlUtils.getChildrenInGroup(element, "tasks", "task");
-//            if (list != null && !list.isEmpty()) {
-//                for (Element e : list) {
-//                    FrameworkTaskDef taskDef = getTaskDef(e);
-//                    if (taskDef != null) {
-//                        tasks.put(taskDef.getName(), taskDef);
-//                    }
-//                }
-//            }
-//            return tasks;
-//        }
-//
-//        private FrameworkTaskDef getTaskDef(Element e) {
-//            FrameworkTaskDef taskDef = null;
-//            String className = XmlUtils.getTextValue(e, "class");
-//            String name = e.getAttribute("name");
-//            int ticksPerRun = XmlUtils.getIntegerValue(e, "ticksperrun");
-//            Map<String, Object> params = XmlUtils.getTypedParams(e);
-//
-//            Map<ModuleName, String> associatedModules = getAssociatedModules(e);
-//            taskDef = new FrameworkTaskDef();
-//            taskDef.setClassName(className.trim());
-//            taskDef.setName(name.trim());
-//            taskDef.setParams(params);
-//            taskDef.setTicksPerRun(ticksPerRun);
-//            taskDef.setAssociatedModules(associatedModules);
-//            return taskDef;
-//        }
-//
-//        private Map<ModuleName, String> getAssociatedModules(Element element) {
-//            Map<ModuleName, String> associatedModules = new HashMap<ModuleName, String>();
-//            List<Element> nl = XmlUtils.getChildren(element, "associatedmodule");
-//            String elementName = element.getAttribute("name");
-//            if (nl != null && ! nl.isEmpty()) {
-//                for (Element assocModuleElement : nl) {
-//                    String assocMod = XmlUtils.getValue(assocModuleElement);
-//                    String function = assocModuleElement.getAttribute("function").trim();
-//                    ModuleName name = ModuleName.getModuleName(assocMod);
-//                    if (name == null) {
-//                        name = ModuleName.addModuleName(assocMod);
-//                        logger.log(
-//                                Level.INFO,
-//                                "{1} is not a pre-defined ModuleName so a new ModuleName was created for element: {2}",
-//                                new Object[] { 0L, assocMod, elementName });
-//                    }
-//                    associatedModules.put(name, function);
-//                }
-//            }
-//            return associatedModules;
-//        }
+        private void loadFactoryParams() {
+            if (params == null || params.isEmpty()) {
+                return;
+            }
+
+            // No parameters are accepted for DefaultFrameworkTaskFactory at the
+            // moment so just log if one was set in XML
+            for (LidaParam param : params) {
+                logger.log(Level.WARNING, "Unrecognized factory parameter in initializer: {1}",
+                        new Object[] { TaskManager.getCurrentTick(), param.getName() });
+            }
+        }
+
+        private void loadFactoryObjects() {
+            if (objects == null || objects.isEmpty()) {
+                return;
+            }
+
+            for (LidaFactoryObject obj : objects) {
+                String taskName = obj.getName();
+                String taskType = obj.getObjectType();
+
+                if (tasks.containsKey(taskName)) {
+                    logger.log(
+                            Level.WARNING,
+                            "Encountered multiple framework tasks with name {1}.  Only first will be retained.",
+                            new Object[] { TaskManager.getCurrentTick(), taskName });
+                }
+
+                FrameworkTask task = createFactoryObject(obj, FrameworkTask.class);
+
+                // Initialize framework task parameters
+                initTask(task, obj);
+
+                // Add to strategy map in outer class
+                tasks.put(taskName, task);
+
+                logger.log(Level.INFO,
+                        "Successfully registered framework task with name {1} and type {2}.",
+                        new Object[] { TaskManager.getCurrentTick(), taskName, taskType });
+
+                // If framework task was set as "default" for type, then add to
+                // FrameworkTaskFactory's default tasks registry
+                if (obj.isDefault()) {
+                    @SuppressWarnings("unchecked")
+                    Class<? extends FrameworkTask> taskInterface = (Class<? extends FrameworkTask>) getInterface(obj);
+                    if (defaultTasks.containsKey(taskInterface)) {
+                        logger.log(
+                                Level.WARNING,
+                                "Encountered multiple default framework tasks for type {1}.  Only first will be retained.",
+                                new Object[] { TaskManager.getCurrentTick(), taskInterface });
+                    } else {
+                        defaultTasks.put(taskInterface, taskName);
+
+                        logger.log(
+                                Level.INFO,
+                                "Framework task with name {1} has been marked as default for type {2}.",
+                                new Object[] { TaskManager.getCurrentTick(), taskName,
+                                        taskInterface });
+                    }
+                }
+            }
+        }
+
+        private void initTask(FrameworkTask task, LidaFactoryObject factoryObject) {
+            List<LidaParam> params = factoryObject.getObjectParams();
+
+            if (params == null || params.isEmpty()) {
+                return;
+            }
+
+            Map<String, Object> typedParams = getTypedParams(params);
+            task.init(typedParams);
+        }
     }
 }
