@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import edu.memphis.ccrg.lida.actionselection.PreafferenceListener;
-import edu.memphis.ccrg.lida.framework.CodeletManagerModule;
+import edu.memphis.ccrg.lida.framework.AttentionCodeletManagerModule;
 import edu.memphis.ccrg.lida.framework.FrameworkModule;
 import edu.memphis.ccrg.lida.framework.FrameworkModuleImpl;
 import edu.memphis.ccrg.lida.framework.ModuleName;
@@ -36,7 +36,7 @@ import edu.memphis.ccrg.lida.workspace.Workspace;
  * 
  */
 public class AttentionCodeletModule extends FrameworkModuleImpl implements BroadcastListener,
-        PreafferenceListener, CodeletManagerModule {
+        PreafferenceListener, AttentionCodeletManagerModule {
 
     private static final Logger logger = Logger.getLogger(AttentionCodeletModule.class
             .getCanonicalName());
@@ -150,7 +150,7 @@ public class AttentionCodeletModule extends FrameworkModuleImpl implements Broad
     }
 
     @Override
-    public void addCodelet(Codelet codelet) {
+    public void addCodelet(AttentionCodelet codelet) {
         if (codelet instanceof AttentionCodelet) {
             taskSpawner.addTask(codelet);
             logger.log(Level.FINER, "New attention codelet: {1} added to run.", new Object[] {
