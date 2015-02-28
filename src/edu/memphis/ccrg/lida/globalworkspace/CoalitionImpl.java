@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import edu.memphis.ccrg.lida.attentioncodelets.AttentionCodelet;
-import edu.memphis.ccrg.lida.attentioncodelets.AttentionCodeletImpl;
 import edu.memphis.ccrg.lida.framework.shared.CognitiveContentStructure;
 import edu.memphis.ccrg.lida.framework.shared.activation.ActivatibleImpl;
 import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
@@ -23,7 +22,6 @@ import edu.memphis.ccrg.lida.framework.tasks.TaskManager;
  * that created it.
  * 
  * @author Ryan J. McCall
- * @see AttentionCodeletImpl
  */
 public class CoalitionImpl extends ActivatibleImpl implements Coalition {
 
@@ -60,7 +58,6 @@ public class CoalitionImpl extends ActivatibleImpl implements Coalition {
      *            the broadcast content
      * @param c
      *            The {@link AttentionCodelet} that created this Coalition
-     * @see AttentionCodeletImpl
      */
     public CoalitionImpl(CognitiveContentStructure<?> ns, AttentionCodelet c) {
         this();
